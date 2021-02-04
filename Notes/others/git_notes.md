@@ -1,103 +1,95 @@
-# Reference:
+### Reference:
 
 https://blog.csdn.net/weixin_30699831/article/details/101982286
 
 https://blog.csdn.net/halaoda/article/details/78661334
 
 ---------------------------------------------------------------
-# git bash:
-### Concept   
-修改的文件位于工作区，`add`后文件被加载进暂存区，`commit`后文件进入版本库
+### 基础知识
 
----
+git包括三个区域：工作区、暂存区、本地仓库，在远端（remote）包括：远程库
 
-### Basic
-1.从远程主机的特定分支获取更新，并合并到本地分支上   
-`git pull {远程主机名} {远程分支}:{本地分支}`   
+工作区(Work directory)：一般就是我们项目的根目录。
 
-2.将本地的commit过的更新同步到远程主机   
-`git push {远程主机名} {本地分支}:{远程分支}`
+暂存区(Stage/Index)：版本库中设立一个暂存区(Stage/Index），作为用来直接跟工作区的文件进行交互，工作区文件的提交(commit)或者回滚(reset)都是通过暂存区，而版本库中除了暂存区之外，文件的提交的最终存储位置是分支(Branch)，在创建版本库的时候默认都会有一个主分支(Master)。
 
-3.克隆版本库   
-`git clone {远程地址}` 克隆整个版本库   
-`git clone --bare {远程地址}` 仅克隆一个裸版本库
+本地仓库(Repository)：我们在为项目添加本地库之后，会在工作区生成一个隐藏目录“.git”，.git目录即为当前工作区的本地版本库
 
----
+版本控制流程：
+1、修改本地已被跟踪文件(指旧文件)，文件进入未暂存区域
+2、未暂存区域转到暂存区：`git add files`
+3、暂存区提交到本地仓库：`git commit -m ‘commits’`
+4、本地库回退到为暂存区：`git reset --mixed hash/origin/master`  tips: --mixed为默认参数，可以省略
 
-### Branch
-1.实现为远程和本地两个分支建立关联   
-`git branch --set-upstream-to=origin/{远程分支} {本地分支}`
 
-2.创建新的分支   
-`git branch {新的分支}`
 
-3.查看所有分支   
-`git branch -a`
+### 基础命令
 
-4.删除分支   
-`git branch -d {需要删除的分支}`
+##### 1、添加文件到暂存区
 
-5.切换分支   
-`git checkout {需要切换的分支}`
+添加指定文件：`git add file`  
 
-6.创建分支并切换到该分支 git branch + git checkout
-`git checkout -b {新分支名}`
+添加工作路径下的所有修改文件：`git add .`
 
----
+##### 2、将暂存区的修改提交到本地库
 
-### Version Control
-1.查看版本改动历史   
-`git log` 显示历史记录   
-`git log --oneline` 显示简略版历史记录   
-`git log --graph` 显示图形化版本历史记录   
-`git log -n {num}` 显示最后num次提交的commits   
-`git log --dirstat` 显示被修改文件的目录   
-`git log --shortstat` 显示多少文件被修改   
+常规提交：`git commit -m 'commits'`
 
-2.显示修改文件   
-`git status` 查看发生修改   
-`git status --short` 显示简略版修改   
+添加并提交(无法用于新文件)：`git commit -am ‘commits’`
 
-3.显示提交的差异   
-`git diff` 显示工作区未注册的本地修改   
-`git diff {hash} Head` 显示两次提交的差异   
-`git diff {hash}^!` 与上次提交进行比较   
+##### 3、回退版本(取消commit)的内容
 
-4、从暂存区撤回修改（将add取消）   
-`git reset HEAD {file}` 撤回指定文件的add
-`git reset HEAD .` 撤回当前的所有修改
+回退到某一版本(commit)：`git reset HEAD`
 
-### Note:   
-1.git pull应该放在commit -m和git push之间。  
-如果存在add的内容没有commit，则不允许git pull
 
----
 
-# Github:
-在github端不能直接删除仓库中的文件，只能删除整个仓库
 
-github中存有HSS和HTML两种地址
 
-每次更换新的电脑、每次更换新的仓库，如果需要使用git的pull和push功能时，都需要将公钥加入到github自有库中的setting-keys中
+##### 3、分支控制
 
----
+查看分支：`git branch`
 
-## git&&pycharm（暂时不用了）:
+查看本地分支和远程分支：`git branch -a`
 
-### 设置
+创建分支：`git branch mybranch`
 
-1、建立连接首先需要在Settings-Version_Control-git中，选定git.exe的所在地址
+切换分支：`git checkout mybranch` 
 
-2、接着在Settings-Version_Control-github中，输入用户名和密码，进行连接
+创建并切换分支：`git checkout -b mybranch`
 
-3、在VCS-Get_From_Version_Control中输入github库给定的HSS地址，并输入所需要克隆的位置
+##### 5、其他
 
-### 使用
+精简显示文件状态：`git status -s`  tips:A表示新添加到暂存区的文件，M表示已修改，??表示未跟踪，靠左侧表示暂存区，靠右侧表示工作区
 
-1、修改工程需要进行同步时，首先右键工程点击Git-Add(可以设置自动添加）
+### 完全重建版本库
 
-2、add后，点击右上角commit，并输入相关信息
+```bash
+$ rm -rf .git 
 
-3、commit后，点击右上角的push，即可将更新同步到远端服务器
+$ git init 
 
-4、另一台电脑需要将本机的更新获得同步时，只要点击右上角的update(pull)即可
+$ git add . 
+
+$ git commit -m "first commit"
+
+$ git remote add origin <your_github_repo_url> 
+
+$ git push -f -u origin master
+```
+
+
+
+### 开发分支（dev）合并到 master 分支
+
+```bash
+$ git checkout -b dev # 切换到开发分支
+
+$ git pull # 将
+
+$ git checkout master
+
+$ git merge dev
+
+$ git push -u origin master
+```
+
