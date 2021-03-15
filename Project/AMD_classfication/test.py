@@ -17,6 +17,10 @@ import torch
 # plt.imshow(cropped)
 # plt.show()
 
-X = torch.rand(2,3,3)
-Y = torch.rand(500, 1)
-print(X)
+# X = torch.rand(2,3,3)
+# Y = torch.rand(500, 1)
+# print(X)
+
+mylist = ['a','b','c','d','e','f']
+myslice=slice(3,5)
+print(mylist[myslice])

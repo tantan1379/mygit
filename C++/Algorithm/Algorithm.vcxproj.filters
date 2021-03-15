@@ -15,13 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="01_basic.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="00_model.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="reverse_list.cpp">
+    <ClCompile Include="basic1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

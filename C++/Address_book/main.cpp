@@ -88,6 +88,7 @@ void addContact(BOOKS* abs) {
 		cout << "Please input the contact age£º" << endl;
 		cin >> age;
 		abs->contactArray[abs->m_Size].m_Age = age;
+
 		//input phone number
 		string phone;
 		cout << "Please input the contact phone number£º" << endl;
@@ -105,7 +106,6 @@ void addContact(BOOKS* abs) {
 		cout << "Add contact successfully" << endl;
 		system("pause");
 		system("cls");
-
 	}
 }
 
@@ -121,7 +121,7 @@ void showContact(BOOKS* abs) {
 			cout << "age:" << abs->contactArray[i].m_Age << "\t";
 			cout << "phone:" << abs->contactArray[i].m_Phone << "\t";
 			cout << "address:" << abs->contactArray[i].m_Address << endl;
-		}
+		} 
 	}
 	system("pause");
 	system("cls");
@@ -154,7 +154,6 @@ void deleteContact(BOOKS* abs) {//ÕâÀïµÄabsÎª½á¹¹ÌåÖ¸Õë±äÁ¿£¬Ïàµ±ÓÚ´«Èë½á¹¹Ìå±äÁ
 			cout << name << " has been deleted" << endl;
 			//refresh address book number
 			abs->m_Size--;
-
 		}
 		else {
 			cout << "Person " << name << " not found, please retype!" << endl;

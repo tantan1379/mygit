@@ -107,7 +107,7 @@ if __name__ == '__main__':
     test_loader = DataLoader(test_db, batch_size=batch_size, shuffle=False, num_workers=18)
     print("Classes & Labels are as follows:")
     print(train_db.get_label())
-    model = resnet50(5).to(device)
+    model = resnet50(4).to(device)
 
     # Count the number of parameters
     print('parameters_number = {}'.format(sum(p.numel() for p in list(model.parameters()) if p.requires_grad)))

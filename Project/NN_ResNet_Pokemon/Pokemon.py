@@ -29,13 +29,13 @@ class Pokemon(Dataset):
         assert (mode == 'train' or mode == 'val' or mode == 'test'), 'invalid mode'
         if mode == 'train':  # dataset(0%~70%) as train_set
             self.images = self.images[:int(0.7 * len(self.images))]
-            self.labels = self.labels[:int(0.7 * len(self.labels))]
+            self.labels = self.labels[:int(0.7 * len(self.images))]
         elif mode == 'val':  # dataset(70%~85%) as validation_set
             self.images = self.images[int(0.7 * len(self.images)):int(0.85 * len(self.images))]
-            self.labels = self.labels[int(0.7 * len(self.labels)):int(0.85 * len(self.labels))]
+            self.labels = self.labels[int(0.7 * len(self.images)):int(0.85 * len(self.images))]
         elif mode == 'test':  # dataset(85%~100%) as test_set
             self.images = self.images[int(0.85 * len(self.images)):]
-            self.labels = self.labels[int(0.85 * len(self.labels)):]
+            self.labels = self.labels[int(0.85 * len(self.images)):]
         else:
             pass
 
@@ -94,3 +94,7 @@ class Pokemon(Dataset):
         img = trans(img)
         label = torch.tensor(label)
         return img, label
+
+train_db = Pokemon(r'F:\Database\pokemon', 224, 'train')  # dataset(0%~70%) as train_set
+val_db = Pokemon(r'F:\Database\pokemon', 224, 'val')  # dataset(70%~85%) as validation_set
+test_db = Pokemon(r'F:\Database\pokemon', 224, 'test')  # dataset(85%~100%) as test_set

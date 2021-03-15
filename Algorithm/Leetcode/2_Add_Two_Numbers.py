@@ -14,3 +14,21 @@ You may assume the two numbers do not contain any leading zero, except the numbe
 """
 
 
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+class Solution:
+    @staticmethod
+    def method(l1: ListNode, l2: ListNode) -> ListNode:
+        dummy = ListNode(0)
+        node = ListNode(dummy)
+        carry = 0
+        while l1 or l2 or carry:
+            target = (l1 if(l1) else 0)+(l2 if(l2) else 0)+carry
+            carry = target/10
+            target = target%10
+
+        return dummy.next

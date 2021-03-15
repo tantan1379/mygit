@@ -14,12 +14,14 @@ You can return the answer in any order.
 
 
 class Solution(object):
-    def method1(self, nums, target):
+    @staticmethod
+    def method1(nums, target):
         for i in range(len(nums)):
             for j in range(i + 1, len(nums)):
                 if nums[i] + nums[j] == target:
                     return [i, j]
 
+    @staticmethod
     def method2(self, nums, target):
         # Hashmap solution
         # Time complexity: O(n)

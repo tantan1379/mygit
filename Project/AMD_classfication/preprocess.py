@@ -14,5 +14,5 @@ for file in os.listdir(root_path):
     for image in images:
         img = Image.open(image)
         cropped = img.crop((500, 0, 1008, 435))
-        cropped.save("F:/Lab/AMD_CL/preprocessed/"+file+"/"+image.split(os.sep)[3])
+        cropped.save("F:/Lab/AMD_CL/preprocessed/"+file+"/"+image.split(os.sep)[-1])
     # print(len(images))
