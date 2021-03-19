@@ -18,33 +18,44 @@ warnings.filterwarnings("ignore")
 
 def evaluate(md, loader):
     correct_num = 0
-    TP, TN, FN, FP = 0, 0, 0, 0
+    target_num = torch.zeros((1, 3))
+    predict_num = torch.zeros((1, 3))
+    acc_num = torch.zeros((1, 3))
     total_num = len(loader.dataset)
     for _, (data, target) in enumerate(loader):
         data, target = data.to(device), target.to(device)
         output = md(data)
         _, prediction = torch.max(output, 1)
-        correct_num += torch.eq(prediction, target).cpu().sum()
-        TP += ((target == 1) & (prediction == 1)).cpu().sum()
-        TN += ((target == 0) & (prediction == 0)).cpu().sum()
-        FN += ((target == 0) & (prediction == 1)).cpu().sum()
-        FP += ((target == 1) & (prediction == 0)).cpu().sum()
+        pre_mask = torch.zeros(output.size()).scatter_(1, prediction.cpu().view(-1, 1), 1.)
+        predict_num += pre_mask.sum(0)
+        tar_mask = torch.zeros(output.size()).scatter_(1, target.data.cpu().view(-1, 1), 1.)
+        target_num += tar_mask.sum(0)
+        acc_mask = pre_mask * tar_mask
+        acc_num += acc_mask.sum(0)
+    recall = acc_num / target_num
+    precision = acc_num / predict_num
+    F1 = 2 * recall * precision / (recall + precision)
+    accuracy = acc_num.sum(1)/target_num.sum(1)
 
-    p = TP / (TP + FP)
-    r = TP / (TP + FN)
-    F1 = 2 * r * p / (r + p)
-    acc1 = (TP + TN) / (TP + TN + FP + FN)
-    acc2 = 100 * correct_num / total_num
+    recall = (recall.numpy()[0] * 100).round(3)
+    precision = (precision.numpy()[0] * 100).round(3)
+    F1 = (F1.numpy()[0] * 100).round(3)
+    accuracy = (accuracy.numpy()[0] * 100).round(3)
+    print('recall', " ".join('%s' % id for id in recall))
+    print('precision', " ".join('%s' % id for id in precision))
+    print('F1', " ".join('%s' % id for id in F1))
+    print('accuracy', accuracy)
+    return accuracy
 
-    return acc1, acc2
+
 
 
 def train(md, epochs_num, tl, lr):
     md.train()
     print("\nStart training:\n")
     bs_epoch, bs_acc = 0, 0
-    losses = []
-    ls_list = []
+    losses = [] # 记录一个Epoch内
+    ls_list = [] # 记录不同Epoch的train loss变化
     ac_list = []
     for epoch in range(epochs_num):
         time.sleep(0.1)
@@ -60,12 +71,11 @@ def train(md, epochs_num, tl, lr):
             loss.backward()
             optimizer.step()
         loss = np.mean(losses)
+        losses = []
         ls_list.append(loss)
         print('Average loss in epoch {} is {}'.format(epoch + 1, loss))
-        losses = []
-        val_acc,val_acc1 = evaluate(md, val_loader)
-        print('The accuracy of validation set is {:.6f}%\n'.format(val_acc))
-        print('The accuracy of validation set is {:.6f}%\n'.format(val_acc1))
+        val_acc= evaluate(md, val_loader)
+        print('The accuracy of validation set is {:.2f}%\n'.format(val_acc))
         ac_list.append(val_acc)
 
         # Save
@@ -87,7 +97,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     # Add parser argument
     parser.add_argument('--device', default='GPU', choices=['GPU', 'CPU'])
-    parser.add_argument('--epochs', default='30')
+    parser.add_argument('--epochs', default='50')
     parser.add_argument('--batchsize', default='32')
     parser.add_argument('--draw', default='1', choices=['0', '1'])
     args = parser.parse_args()
@@ -111,7 +121,7 @@ if __name__ == '__main__':
     val_loader = DataLoader(val_db, batch_size=batch_size, shuffle=False, num_workers=18)
     test_loader = DataLoader(test_db, batch_size=batch_size, shuffle=False, num_workers=18)
     print("Classes & Labels are as follows:")
-    model = resnet50(3).to(device)
+    model = resnet18(3).to(device)
 
     # Count the number of parameters
     print('parameters_number = {}'.format(sum(p.numel() for p in list(model.parameters()) if p.requires_grad)))
@@ -122,13 +132,13 @@ if __name__ == '__main__':
     # Start training
     best_acc, best_epoch, loss_list, ac_list = train(model, epochs, train_loader, learning_rate)
     print("Training Result:")
-    print('lr={} : best_acc: {:.6f}% best_epoch: {}'.format(learning_rate, best_acc, best_epoch + 1))
+    print('lr={} : best_acc: {:.2f}% best_epoch: {}'.format(learning_rate, best_acc, best_epoch + 1))
 
     # Start test
     print('Start Test:\n')
     model.load_state_dict(torch.load(r'AMDCL_ckp.pth'))
     model.eval()
-    test_acc = evaluate(model, test_loader)
+    test_acc= evaluate(model, test_loader)
     print('The accuracy of test set is {:.6f}%'.format(test_acc))
 
     # Draw loss function curve

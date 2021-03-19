@@ -24,11 +24,18 @@ class Solution:
     @staticmethod
     def method(l1: ListNode, l2: ListNode) -> ListNode:
         dummy = ListNode(0)
-        node = ListNode(dummy)
+        cur = dummy
         carry = 0
         while l1 or l2 or carry:
-            target = (l1 if(l1) else 0)+(l2 if(l2) else 0)+carry
-            carry = target/10
-            target = target%10
-
+            target = (l1.val if l1 else 0) + (l2.val if l2 else 0) + carry
+            carry = target // 10
+            cur.next = ListNode(target % 10)
+            cur = cur.next
+            if l1: l1 = l1.next
+            if l2: l2 = l2.next
         return dummy.next
+
+
+if __name__ == "__main__":
+    list1 = [3, 4, 5]
+    list2 = [5, 6, 7]
