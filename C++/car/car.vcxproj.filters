@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="2_Add_two_number.cpp">
+    <ClCompile Include="ssss.c">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

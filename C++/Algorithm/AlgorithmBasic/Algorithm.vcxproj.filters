@@ -18,7 +18,13 @@
     <ClCompile Include="0_macro.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="1_linked_list.cpp">
+    <ClCompile Include="1_LinkList_basic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="2_LinkList_prime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="3_LinkList_test.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

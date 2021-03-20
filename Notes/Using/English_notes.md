@@ -1,5 +1,53 @@
 # English vocabulary
-## 1.Word
+
+### 1、Professional English
+
+#### ophthalmology：
+
+retinal (adj.)视网膜的
+
+retinopathy (n.)视网膜病变
+
+diabetic (adj.)糖尿病的
+
+leision (n.)损伤
+
+edema (n.)水肿
+
+angiography （n.)血管造影术
+
+metabolic (adj.)代谢的
+
+morbidity (n.)发病
+
+fovea (n.) 中央凹
+
+macula (n.) 黄斑
+
+
+
+retinal nerve fibre layer（RNFL） 视网膜神经纤维层
+
+subretinal pigment epithelium 视网膜色素上皮层
+
+diabetic  retinopathy(DR) 糖尿病性视网膜病变（白内障） 
+
+cystoid macular edema（CME）黄斑囊样水肿
+
+macular hole（MH）黄斑裂孔
+
+serous retinal detachment（SRD）浆液性视网膜脱离
+
+ground true 金标准
+
+vascular endothelial growth factor(VEGF) 血管内皮生长因子
+
+
+
+---
+
+## 2.Word
+
 variance (n.)方差   
 
 subspace (n.)子空间   
@@ -76,43 +124,9 @@ relatively (adv.)相对地
 
 indispensable (adj.)不可缺少的
 
-#### ophthalmology：
+---
 
-retinal (adj.)视网膜的
-
-retinopathy (n.)视网膜病变
-
-diabetic (adj.)糖尿病的
-
-leision (n.)损伤
-
-edema (n.)水肿
-
-angiography （n.)血管造影术
-
-metabolic (adj.)代谢的
-
-morbidity (n.)发病
-
-
-
-retinal nerve fibre layer（RNFL） 视网膜神经纤维层
-
-subretinal pigment epithelium 视网膜色素上皮层
-
-diabetic  retinopathy(DR) 糖尿病性视网膜病变（白内障） 
-
-cystoid macular edema（CME）黄斑囊样水肿
-
-macular hole（MH）黄斑裂孔
-
-serous retinal detachment（SRD）浆液性视网膜脱离
-
-ground true 金标准
-
-
-
-## 2.Phrase
+## 3.Match
 concurrent with 与...一起的   
 
 akin to 类似于...   
@@ -133,7 +147,5 @@ ablation experiment 消融实验
 
 in line with 符合于...
 
-
-
-## 3.Sentence
 There is large consent that... 人们普遍认为
+

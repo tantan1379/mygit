@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{6b62cdea-21c3-4e25-9bd7-46a56a52374e}</ProjectGuid>
-    <RootNamespace>Leetcode</RootNamespace>
+    <ProjectGuid>{ed9bd47c-3160-4218-a65f-55e29996cb05}</ProjectGuid>
+    <RootNamespace>car</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,7 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2_Add_two_number.cpp" />
+    <ClCompile Include="ssss.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

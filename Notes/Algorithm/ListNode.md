@@ -45,14 +45,35 @@
 
 
 
-#### 链表的C++表示：
+### 链表的C++表示：
+
+#### 结构体定义：
 
 ```c++
     struct ListNode
     {
-        double value;
+        int val;
         ListNode *next;
+        //构造函数
+        ListNode():val(0),next(nullptr){}
+        ListNode(int x):val(x),next(nullptr){}
+        ListNode(int x,ListNode* next):val(x),next(next){}
     };
+```
+
+#### 链表初始化：
+
+```C++
+ListNode* InitLinkList(){
+	//创建头节点指针
+    ListNode* header = new ListNode(0);
+    //创建尾节点指针
+    ListNode* pRear = header;
+    while(1){
+        cout<<"please input the element in LinkList:"<<" ";
+        
+    }
+}
 ```
 
 

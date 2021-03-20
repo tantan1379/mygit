@@ -1,44 +1,58 @@
-# Deep Learning
-## Pytorch Basic
-#### Basic knowledge
+# Deep Learning（pytorch)
+
+### 1、Basic knowledge
+
 1、tensor比ndarray的优势在于可以使用GPU进行加速计算
+
 2、Variable相当于包装tensor的盒子，里面包含着tensor及对他的操作。Tensor不能反向传播，而Variable可以反向传播。
 调用方法：`from torch.autograd import Variable` 
+
 3、有多少个卷积核就有多少个feature map，一个feature map对应图像被提取的一种特征
+
 4、output = ( input - K + 2 * P ) / S + 1 ，改变S可以改变输入的维度
 
-#### Create tensor
-1、`torch.Tensor(*sizes)`:随机创建指定形状的Tensor
-2、`torch.Tensor(data)`:同torch.FloatTensor()，将List转换为Tensor，生成单精度浮点类型的张量
-3、`torch.tensor(data)`:从data中的数据部分做拷贝，根据原始数据类型生成相应的torch.LongTensor，torch.FloatTensor，torch.DoubleTensor
-4、`torch.ones(*size)`:创建全1的Tensor
-5、`torch.zeros(*size)`:创建全0的Tensor
-6、`torch.eye(*size)`:创建对角Tensor
-7、`torch.arange(s, e, step)`:生成从s到e，步长为step的一维Tensor 
-8、`torch.randn(*size)`：标准分布
-9、`torch.rand(*size)`：均匀分布
-10、`tensor.view()`：调整tensor的形状（常用）
-e.g.:`x=x.view(x.size(0),-1)` 
-其中x.size(0)为batch_size，将四维(batch_size,Channel,Height,Width)的张量flatten为二维的张量，作为全连接层的输入
-11、`tensor.unsqueeze()`:为Tensor添加维度
-12、`tensor.squeeze()`:为Tensor减少维度
+5、经过trainloader加载后，图片的维度为(batchsize,channel,height,width)
+
+6、DoubleTensor比FloatTensor有更高的精度，适合增强学习
+
+------
+
+### 2、Tensor operations：
 
 #### Convert
-1、`data.cuda()`：cpu –> gpu
-`data.cpu()`：gpu –> cpu
-`data.numpy()`：Tensor –> Numpy.ndarray 
-`torch.from_numpy(data)`：Numpy.ndarray –> Tensor
-`a.item()`：对只含一个元素的tensor使用，将tensor转换为python对象类型,
-`newtensor = tensor.int()`：将tensor投射指定类型：
+
+1、cpu –> gpu: `data.cuda()`
+2、gpu –> cpu：`data.cpu()`
+3、Numpy.ndarray –> Tensor **（导入）**： `torch.from_numpy(data)`
+4、Tensor –> Numpy.ndarray ：`data.numpy()`
+5、Tensor -> DoubleTensor: `torch.set_default_tensor_tepe(torch.DoubleTensor)`
+6、将List转换为Tensor，生成单精度浮点类型的张量：`torch.Tensor(data)` 同torch.FloatTensor()
+7、:根据原始数据类型生成相应的张量：`torch.tensor(data)`
+8、将tensor转换为python对象类型：`a.item()`：对只含一个元素的tensor使用，,
+
+#### Create tensor
+
+1、随机创建指定形状的Tensor：`torch.Tensor(*sizes)`
+2、生成从s到e，步长为step的一维Tensor ：`torch.arange(s, e, step)`
+3、标准分布(0,1正态分布) ：`torch.randn(*size)`
+4、均匀分布：`torch.rand(*size)`
+5、调整tensor的形状（常用）：`tensor.view()` e.g.:`x=x.view(x.size(0),-1)` 
+6、为Tensor添加维度：`tensor.unsqueeze()`
+7、为Tensor减少维度：`tensor.squeeze()`
 
 #### Property
-查看Tensor的大小：`tensor.size()` 
+查看Tensor的大小：`tensor.si ze()` 
 查看Tensor的大小：`tensor.shape` 
 统计Tensor的元素个数：`Tensor.numel()`   
 
----
+#### Comparision
 
-## Numpy
+(1) tensor和Tensor(FloatTensor)的区别在于，tensor只能接受现有的数据，Tensor可以接受数据的维度或数据
+为避免混淆，使用时建议，要维度用大写Tensor，要具体数据用小写tensor
+
+------
+
+### 3、Numpy
 **（以下用np表示）**
 1、`data.numpy()` 
 将tensor类型转换为numpy类型; 
@@ -49,7 +63,7 @@ Return (x1 == x2) element-wise.
 4、`if array`判断numpy数组是否为空，将列表作为布尔值，若不为空返回True，否则视为False;
 
 ---
-## torchvision
+### 4、torchvision
 1、在datasets模块中保存着各类数据集
 2、在models模块中保存搭建好的网络（可以不加载数据）
 3、在transforms模块中封装了一些处理数据的方法
@@ -59,7 +73,7 @@ Return (x1 == x2) element-wise.
 
 ---
 
-## argparse 命令行解析工具
+### 5、argparse 命令行解析工具
 #### 创建句柄
 `parser = argparse.ArgumentParser()`   创建一个命令解析器的句柄
 
@@ -80,7 +94,7 @@ help: 显示帮助（命令中加-h)
 
 ---
 
-## Flag
+### 6、Flag
 1、`torch.backends.cudnn.benchmark = True`
 大部分情况下，设置这个flag可以让内置的cuDNN的auto-tuner自动寻找最适合当前配置的高效算法，来达到优化运行效率的问题
 **Notes:**   
@@ -89,14 +103,21 @@ help: 显示帮助（命令中加-h)
 
 ---
 
-## Practical application   
+### 7、Practical application   
+
 1、计算网络的参数个数   
 ```
 sum(p.numel() for p in model.parameters() if p.requires_grad)
 ```
 
 2、动态修改学习率   
+
 ```
 for param_group in optimizer.param_groups:
     param_group["lr"] = lr
 ```
+
+---
+
+### 8、Others
+
