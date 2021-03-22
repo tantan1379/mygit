@@ -6,7 +6,7 @@
 
 ##### C
 
-在C语言中，NULL被定义为：`\#define NULL` ((void *)0)，不存在二义性
+在C语言中，NULL被定义为：`#define NULL` ((void *)0)，不存在二义性
 
 ##### C++
 
@@ -19,7 +19,7 @@ NULL是一种宏定义，在C++的`stddef.h`头文件中，NULL被定义为常�
 
 #### 2、struct和typedef的区别：
 
-在C语言中声明一种结构的变量不能省略`struct`，而在C语言中可以省略；
+在C语言中声明一种结构的变量不能省略`struct`，而在C++中可以省略；
 
 在C语言结构体定义时，如果加上``typedef`，可以在声明结构体变量时也可以省略struct，表示这是一种新的包含`struct`的别名。
 

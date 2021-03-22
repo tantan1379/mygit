@@ -1,7 +1,8 @@
-## Leecode小记
+## 栈和队列
 
-#### 栈和队列
-在python中用**列表List**模拟栈和队列的功能：   
+
+
+python中用**列表List**模拟栈和队列的功能：   
 栈在顶部先进后出（FILO），通常用List的最右端模拟栈的顶部   
 **栈：**   
 基本功能：  
@@ -40,7 +41,7 @@ class MyStack(object):
     def empty(self):
         return not bool(self.q)
 
-```    
+```
 **用栈实现队列(L232)：**   
 ```
 class MyQueue(object):
