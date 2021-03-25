@@ -4,7 +4,11 @@
 ListNode* RemoveNthNodeFromEndofList(ListNode* header, int n) {
 	if (nullptr == header->next && nullptr == header) {
 		cout << "The linklist must have at least 2 elements!" << endl;
-		return nullptr;
+		exit(-1);
+	}
+	if (n <= 0) {
+		cout << "n must be a positive number!" << endl;
+		exit(-1);
 	}
 	ListNode* dummy = new ListNode(0, header);
 	ListNode* fast = dummy;
@@ -25,10 +29,11 @@ ListNode* RemoveNthNodeFromEndofList(ListNode* header, int n) {
 }
 
 void test019() {
-	int delnum;
-	vector<int> arr = { 0,1,2,3 };
+	unsigned int delnum;
+	vector<int> arr = {1,2,3};
+	cout << "原链表为：";
 	ListNode* header = Init_LinkList(arr);
-	cout << "原链表为：" << endl;
+
 	Foreach_LinkList(header);
 	cout << "请输入你想倒数删除的节点数？" << endl;
 	cin >> delnum;

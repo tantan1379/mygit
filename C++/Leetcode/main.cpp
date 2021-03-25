@@ -4,7 +4,7 @@
 using namespace std;
 
 int main() {
-	test002();
+	test061();
 	system("pause");
 	return 0;
 }

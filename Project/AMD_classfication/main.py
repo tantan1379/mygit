@@ -35,7 +35,7 @@ def evaluate(md, loader):
     recall = acc_num / target_num
     precision = acc_num / predict_num
     F1 = 2 * recall * precision / (recall + precision)
-    accuracy = acc_num.sum(1)/target_num.sum(1)
+    accuracy = acc_num.sum(1) / target_num.sum(1)
 
     recall = (recall.numpy()[0] * 100).round(3)
     precision = (precision.numpy()[0] * 100).round(3)
@@ -48,14 +48,12 @@ def evaluate(md, loader):
     return accuracy
 
 
-
-
 def train(md, epochs_num, tl, lr):
     md.train()
     print("\nStart training:\n")
     bs_epoch, bs_acc = 0, 0
-    losses = [] # 记录一个Epoch内
-    ls_list = [] # 记录不同Epoch的train loss变化
+    losses = []  # 记录一个Epoch内
+    ls_list = []  # 记录不同Epoch的train loss变化
     ac_list = []
     for epoch in range(epochs_num):
         time.sleep(0.1)
@@ -74,7 +72,7 @@ def train(md, epochs_num, tl, lr):
         losses = []
         ls_list.append(loss)
         print('Average loss in epoch {} is {}'.format(epoch + 1, loss))
-        val_acc= evaluate(md, val_loader)
+        val_acc = evaluate(md, val_loader)
         print('The accuracy of validation set is {:.2f}%\n'.format(val_acc))
         ac_list.append(val_acc)
 
@@ -138,7 +136,7 @@ if __name__ == '__main__':
     print('Start Test:\n')
     model.load_state_dict(torch.load(r'AMDCL_ckp.pth'))
     model.eval()
-    test_acc= evaluate(model, test_loader)
+    test_acc = evaluate(model, test_loader)
     print('The accuracy of test set is {:.6f}%'.format(test_acc))
 
     # Draw loss function curve

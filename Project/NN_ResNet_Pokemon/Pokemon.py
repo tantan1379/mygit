@@ -63,7 +63,7 @@ class Pokemon(Dataset):
                     writer.writerow([img, label])
                 print('image paths and labels have been writen into csv file:', filename)
 
-        # Read in dataeeeeeeee
+        # Read in data
         images, labels = [], []
         with open(os.path.join(self.root, filename)) as f:
             reader = csv.reader(f)
@@ -94,6 +94,7 @@ class Pokemon(Dataset):
         img = trans(img)
         label = torch.tensor(label)
         return img, label
+
 
 train_db = Pokemon(r'F:\Database\pokemon', 224, 'train')  # dataset(0%~70%) as train_set
 val_db = Pokemon(r'F:\Database\pokemon', 224, 'val')  # dataset(70%~85%) as validation_set

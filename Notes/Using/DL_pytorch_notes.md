@@ -22,37 +22,89 @@
 #### Convert
 
 1、cpu –> gpu: `data.cuda()`
+
 2、gpu –> cpu：`data.cpu()`
+
 3、Numpy.ndarray –> Tensor **（导入）**： `torch.from_numpy(data)`
+
 4、Tensor –> Numpy.ndarray ：`data.numpy()`
+
 5、Tensor -> DoubleTensor: `torch.set_default_tensor_tepe(torch.DoubleTensor)`
+
 6、将List转换为Tensor，生成单精度浮点类型的张量：`torch.Tensor(data)` 同torch.FloatTensor()
-7、:根据原始数据类型生成相应的张量：`torch.tensor(data)`
+
+7、根据原始数据类型生成相应的张量：`torch.tensor(data)`
+
 8、将tensor转换为python对象类型：`a.item()`：对只含一个元素的tensor使用，,
+
+
 
 #### Create tensor
 
 1、随机创建指定形状的Tensor：`torch.Tensor(*sizes)`
-2、生成从s到e，步长为step的一维Tensor ：`torch.arange(s, e, step)`
-3、标准分布(0,1正态分布) ：`torch.randn(*size)`
-4、均匀分布：`torch.rand(*size)`
-5、调整tensor的形状（常用）：`tensor.view()` e.g.:`x=x.view(x.size(0),-1)` 
-6、为Tensor添加维度：`tensor.unsqueeze()`
-7、为Tensor减少维度：`tensor.squeeze()`
+
+2、生成从s到e(不包含e)，步长为step的一维Tensor ：`torch.arange(s, e, step)`
+生成从s到e(包含e)，元素个数为steps的一维Tensor：`torch.linspace(s,e,steps)`
+
+3、生成随机分布的Tensor:
+标准分布(0,1正态分布) ：`torch.randn(*size)`
+均匀分布：`torch.rand(*size)`
+
+4、创建特殊的Tensor：`torch.ones(*size)` `torch.zeros(*size)` `torch.eyes(*size)`
+
+5、创建具有相同值的Tensor:`torch.full(*size,val)` 如果size写[]，生成标量
+
+
+
+#### Index&slice
+
+1、选取指定维度进行切片：`a.index_select(dim,torch.tensor)`  2、冒号    3、省略号 
+
+
+
+#### Dimension
+
+1、调整Tensor的形状（常用）：`tensor.view()` e.g.:`x=x.view(x.size(0),-1)`
+**notes:** 在神经网络中图像的维度为(batchsize,channel,height,width),一定要以这个顺序和逻辑进行view；view前后的size要相同
+
+2、修改维度
+（增维）：`tensor.unsqueeze(pos)` 在posi前的一个位置加一维
+（减维）：`tensor.squeeze()`自动挤压所有值为1的维度 `tensor.squeeze(pos)`挤压（减去）pos位置的维度
+（维度扩展）：`tensor.expand(*size)` [=] 
+**note:** 1、自动复制broadcast tensor，变换前后维数不变；  2、需要扩张的维值必须为1；  3、如果某一位置填-1则表示该维保持不变
+
+3、交换维度：
+（二维）：`tensor.t()`
+（多维）：`tensor.transpose(dim1,dim2)`
+（通用）：`tensor.permute(dim1,dim2,dim3,...)`
+
+4、Broadcast：
+先在某一维度**之前**插入维度(unsqueeze)，再在大小为1的维度上进行扩张(expand)
+
+
+
+#### Merge&Split
+
+1、cat:`torch.cat([a,b],dim) `两个拼接的tensor必须在dim维之外的维度均相等
+
+
 
 #### Property
-查看Tensor的大小：`tensor.si ze()` 
+
+查看Tensor的大小：`tensor.size()` 
 查看Tensor的大小：`tensor.shape` 
 统计Tensor的元素个数：`Tensor.numel()`   
 
+
+
 #### Comparision
 
-(1) tensor和Tensor(FloatTensor)的区别在于，tensor只能接受现有的数据，Tensor可以接受数据的维度或数据
+(1) tensor和Tensor(FloatTensor)的区别在于，tensor只能接受现有的数据，Tensor可以接受数据的维度()或数据([])
 为避免混淆，使用时建议，要维度用大写Tensor，要具体数据用小写tensor
 
 ------
 
-### 3、Numpy
+### 3、Numpy 
 **（以下用np表示）**
 1、`data.numpy()` 
 将tensor类型转换为numpy类型; 

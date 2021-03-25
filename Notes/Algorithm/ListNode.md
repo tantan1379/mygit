@@ -71,20 +71,21 @@
     };
 ```
 
-#### 2、链表初始化（创建插入更新）：
+#### 2、链表初始化：
 
 ```C++
-ListNode* InitLinkList(vector<int> arr){
-	//创建头节点指针
-    ListNode* header = new ListNode(arr[0]);
-    //创建尾节点指针
-    ListNode* pCurrent = header;
-   	for(int i=1;i<arr.size();i++){
-    	pCurrent->next = new ListNode(arr[i]);
-        pCurrent = pCurrent->next;
-    }
-    delete pCurrent;
-    return header;
+ListNode* Init_LinkList(vector<int>& arr) {//引用传递
+	if (arr.size() == 0) {
+		cout << "警告，链表为空！" << endl;
+		return nullptr;
+	}
+	ListNode* header = new ListNode(arr[0]);
+	ListNode* pCurrent = header;
+	for (int i = 1; i < arr.size(); i++) {
+		pCurrent->next = new ListNode(arr[i]);
+		pCurrent = pCurrent->next;
+	}
+	return header;
 }
 ```
 
@@ -182,19 +183,31 @@ public:
 解：
 
 ```C++
-ListNode* removeNthFromEnd(ListNode* head, int n){
-	ListNode* dummy = new ListNode(0,head);
-    ListNode* fast = dummy;
+ListNode* RemoveNthNodeFromEndofList(ListNode* header, int n) {
+	if (nullptr == header->next && nullptr == header) {
+		cout << "The linklist must have at least 2 elements!" << endl;
+		exit(-1);
+	}
+	if (n <= 0) {
+		cout << "n must be a positive number!" << endl;
+		exit(-1);
+	}
+	ListNode* dummy = new ListNode(0, header);
+	ListNode* fast = dummy;
 	ListNode* slow = dummy;
-    for(int i=0;i<=n;i++){
-        fast = fast->next;
-    }
-    while(fast){
-        fast = fast->next;
-        slow = slow->next;
-    }
-    slow->next = slow->next->next;
-    return head;
+
+	for (int i = 0; i <= n; i++) {
+		fast = fast->next;
+	}
+	while (fast) {
+		slow = slow->next;
+		fast = fast->next;
+	}
+	slow->next = slow->next->next;
+
+	ListNode* ans = dummy->next;
+	delete dummy;
+	return ans;
 }
 ```
 
@@ -255,7 +268,39 @@ ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
 }
 ```
 
+#### [61. 旋转链表](https://leetcode-cn.com/problems/rotate-list/)
 
+给定一个链表，旋转链表，将链表每个节点向右移动 *k* 个位置，其中 *k* 是非负数。
+
+```
+输入: 0->1->2->NULL, k = 4
+输出: 2->0->1->NULL
+解释:
+向右旋转 1 步: 2->0->1->NULL
+向右旋转 2 步: 1->2->0->NULL
+向右旋转 3 步: 0->1->2->NULL
+向右旋转 4 步: 2->0->1->NULL
+```
+
+解（开闭环）：
+
+```C++
+ListNode* RotateList(ListNode* head, int k) {
+	ListNode* oldrear = head;
+	int n;
+	for (n = 1; oldrear->next!=nullptr; n++) {//令n=1，此时循环结束后n即为链表长度
+		oldrear = oldrear->next;
+	}
+	oldrear->next = head;
+	ListNode* newrear = head;
+	for (int i = 0; i < n - k %n - 1; i++) {//注意如果k大于链表长度时的写法
+		newrear = newrear->next;
+	}
+	ListNode* newhead = newrear->next;
+	newrear->next = nullptr;
+	return newhead;
+}
+```
 
 
 

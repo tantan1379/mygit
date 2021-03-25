@@ -5,6 +5,8 @@
 **/Cifar-10
 **/logs_vgg
 Clone/
+.vscode/
+.vs/
 **/*.zip
 **/*.pt
 **/*.gz

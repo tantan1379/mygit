@@ -82,3 +82,6 @@ class AMD_CL(data.Dataset):
             img = trans['val'](img)
         label = torch.tensor(label)
         return img, label
+
+
+AMD_CL(r"F:\Lab\AMD_CL\preprocessed", 224, 'train', True)

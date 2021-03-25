@@ -7,7 +7,8 @@ using namespace std;
 //初始化链表
 ListNode* Init_LinkList(vector<int>& arr) {
 	if (arr.size() == 0) {
-		return 0;
+		cout << "警告，链表为空！" << endl;
+		return nullptr;
 	}
 	ListNode* header = new ListNode(arr[0]);
 	ListNode* pCurrent = header;
@@ -16,20 +17,6 @@ ListNode* Init_LinkList(vector<int>& arr) {
 		pCurrent = pCurrent->next;
 	}
 	return header;
-
-	//ListNode* header = new ListNode(1);
-	//ListNode* pRear = header;
-	//int val = -1;
-	//while (1) {
-	//	cout << "请输入链表的元素：";
-	//	cin >> val;
-	//	if (val == -1) {
-	//		break;
-	//	}
-	//	pRear->next = new ListNode(val);
-	//	pRear = pRear->next;
-	//}
-	//return header;
 }
 
 //遍历链表

@@ -14,11 +14,15 @@ public:
 	ListNode(int x) : val(x), next(nullptr) {}
 	ListNode() :val(0), next(nullptr) {}
 };
+//初始化和遍历模板
 ListNode* Init_LinkList(vector<int>& arr);
 void Foreach_LinkList(ListNode* header);
+//题目部分
 void test002();
 ListNode* AddTwoNumbers(ListNode* l1, ListNode* l2);
 void test019();
 ListNode* RemoveNthNodeFromEndofList(ListNode* header, int n);
 void test021();
 ListNode* MergeTwoSortedLists(ListNode* l1, ListNode* l2);
+void test061();
+ListNode* RotateList(ListNode* head, int k);
