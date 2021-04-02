@@ -11,6 +11,7 @@
 * 经过trainloader加载后，loader的维度为(batchsize,channel,height,width)
 
 * DoubleTensor比FloatTensor有更高的精度，适合增强学习
+* dim=0，在二维中就是压缩纵向；dim=1，压缩横向
 
 ------
 

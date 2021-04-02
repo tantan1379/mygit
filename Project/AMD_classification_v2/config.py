@@ -1,14 +1,15 @@
 class DefaultConfigs(object):
     # 1.string parameters
-    train_data = "F:\\Dataset\\traffic-sign\\train\\"
+    train_data = "F:\\Lab\\AMD_CL\\split\\train\\"
     test_data = ""
-    val_data = "F:\\Dataset\\traffic-sign\\test\\"
+    val_data = "F:\\Lab\\AMD_CL\\split\\val\\"
     model_name = "resnet18"
     weights = ".\\checkpoints\\"
     best_models = weights + "best_model\\"
     submit = ".\\submit\\"
     logs = ".\\logs\\"
     gpus = "0"
+    resume = 'best' # restart, best, last
     augmen_level = "medium"  # "light","hard","hard2"
 
     # 2.numeric parameters
@@ -16,7 +17,7 @@ class DefaultConfigs(object):
     batch_size = 50
     img_height = 300
     img_weight = 300
-    num_classes = 62
+    num_classes = 3
     seed = 888
     lr = 1e-4
     lr_decay = 1e-4

@@ -45,6 +45,7 @@ def evaluate(val_loader, model, optimizer, criterion, epoch):
             input = input.cuda()
             target = torch.from_numpy(np.array(target)).long().cuda()  # 范式
             output = model(input)  # 将input输入模型得到预测输出
+            
             loss = criterion(output, target)  # 根据预测和真实标签求损失
 
             # 2.3.2 计算准确率并实时更新进度条的显示内容
@@ -113,15 +114,17 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=config.lr,
                            amsgrad=True, weight_decay=config.weight_decay)
     criterion = nn.CrossEntropyLoss().cuda()
+    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,"max",verbose=1,patience=3)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+
     # 4.3 重启参数
     start_epoch = 0
     best_precision1 = 0
     # best_precision_save = 0
-    resume = 0  # 0:从头训练 1：从最近最好的一次开始训练 2：从最近的一次开始训练
 
     # 4.4 重启程序
-    assert(resume == 0 or resume == 1 or resume == 2), print("error input")
-    if resume == 1:
+    assert(config.resume == "restart" or config.resume == "best" or config.resume == "last"), print("error input")
+    if config.resume == "last":
         checkpoint = torch.load(
             config.best_models + config.model_name+os.sep + str(fold) + "/model_best.pth.tar")
         start_epoch = checkpoint["epoch"]
@@ -130,7 +133,7 @@ def main():
         model.load_state_dict(checkpoint["state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer"])
 
-    elif resume == 2:
+    elif config.resume == "best":
         checkpoint = torch.load(
             config.weights + config.model_name + os.sep + str(fold) + "/_checkpoint.pth.tar")
         start_epoch = checkpoint["epoch"]
@@ -140,7 +143,7 @@ def main():
         optimizer.load_state_dict(checkpoint["optimizer"])
 
     # 4.5 get files and split for K-fold dataset
-    # 4.5.1 read files
+    # 4.5.1 读入文件列表
     train_data_list = get_files(config.train_data, "train")
     val_data_list = get_files(config.val_data, "val")
     # test_files = get_files(config.test_data,"test")
@@ -157,36 +160,26 @@ def main():
     val_data_list = pd.concat([origin_files["filename"][fold_index[1]],origin_files["label"][fold_index[1]]],axis=1)
     """
     # train_data_list,val_data_list = train_test_split(origin_files,test_size = 0.1,stratify=origin_files["label"])
-    # 4.5.4 load dataset
+    # 4.5.4 将文件列表加载到dataloader中
     train_dataloader = DataLoader(ChaojieDataset(train_data_list), batch_size=config.batch_size, shuffle=True,
                                   collate_fn=collate_fn, pin_memory=True, num_workers=0)
     val_dataloader = DataLoader(ChaojieDataset(val_data_list, train=False), batch_size=config.batch_size * 2,
                                 shuffle=True, collate_fn=collate_fn, pin_memory=False, num_workers=0)
     # test_dataloader = DataLoader(ChaojieDataset(test_files,test=True),batch_size=1,shuffle=False,pin_memory=False)
-    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer,"max",verbose=1,patience=3)
-    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
-    # 4.5.5.1 define metrics
+  
+    # 4.5.5 训练部分
+    model.train()
     train_losses = AverageMeter()
     train_top1 = AverageMeter()
     valid_loss = [np.inf, 0, 0]
-
-    # 4.5.5 train
-    model.train()
-    # start = timer()
     for epoch in range(start_epoch, config.epochs):
-        scheduler.step(epoch)
-
         train_progressor = ProgressBar(mode="Train", epoch=epoch, total_epoch=config.epochs,
                                        model_name=config.model_name, total=len(train_dataloader))
-        # train
-        # global iter
         for iter, (input, target) in enumerate(train_dataloader):
-            # 4.5.5 switch to continue train process
             train_progressor.current = iter
             model.train()
             input = input.cuda()
             target = torch.from_numpy(np.array(target)).long().cuda()
-            # target = Variable(target).cuda()
             output = model(input)
             loss = criterion(output, target)
 
@@ -196,12 +189,13 @@ def main():
             train_top1.update(precision1_train[0], input.size(0))
             train_progressor.current_loss = train_losses.avg
             train_progressor.current_top1 = train_top1.avg
-            train_progressor.current_lr = get_learning_rate(optimizer)
-            # backward
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            train_progressor()
+            train_progressor.current_lr = optimizer.param_groups[0]["lr"]
+            # BP算法（三范式）
+            optimizer.zero_grad()  # 梯度归零
+            loss.backward()  # 反向传播
+            optimizer.step()  # 梯度更新
+            train_progressor()  # 调用__call__初始化进度条
+        scheduler.step()  # 学习率衰减更新
         train_progressor.done()
         # evaluate
         # lr = get_learning_rate(optimizer)
@@ -211,7 +205,7 @@ def main():
         is_best = valid_info[1] > best_precision1
         best_precision1 = max(valid_info[1], best_precision1)
         try:
-            best_precision_save = best_precision1.cpu().data.numpy()
+            _ = best_precision1.cpu().data.numpy()
         except:
             pass
         save_checkpoint({
