@@ -29,4 +29,5 @@ void test061();
 ListNode* RotateList(ListNode* head, int k);
 void test024();
 ListNode* SwapNodesinPairs(ListNode* head);
-ListNode* SwapNodesinPairs_(ListNode* head);
+void test143();
+ListNode* reorderList(ListNode* head);

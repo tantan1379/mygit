@@ -24,25 +24,32 @@ from PIL import Image
 # --------------------------------------
 
 # TODO 尝试dataframe
-# root = "C:\\Users\\TRT\\Desktop\\testset\\"
-# images,labels,all_files = [],[],[]
+root = "C:\\Users\\TRT\\Desktop\\testset\\"
+images,labels,all_files = [],[],[]
+title = ['images','labels']
+for file in os.listdir(root):
+    images+=glob.glob(os.path.join(root,file,"*.jpg"))
+for image in images:
+    labels.append(int(image.split(os.sep)[-2]))
 
-# for file in os.listdir(root):
-#     print(file)
-#     images+=glob.glob(os.path.join(root,file,"*.jpg"))
-# for image in images:
-#     labels.append(int(image.split(os.sep)[-2]))
-# all_files=pd.DataFrame({"image":images,"label":labels})
+img_label = np.concatenate((np.array(images).reshape(-1,1),np.array(labels).reshape(-1,1)),axis=1)
+# print(img_label)
+index = [i for i in range(1,len(labels)+1)]
+all_files= pd.DataFrame({"images":images,"labels":labels},index=index)
+
+# print(all_files[all_files['labels']>=2]) # 布尔索引：选取labels>1的所有信息
+# print(all_files[lambda all_files:all_files.columns[0]])
+# all_files2= pd.DataFrame(img_label,columns=title,index=index)
 # images=[]
 # for _,row in all_files.iterrows():
 #     images.append((row["image"],row["label"]))
-
-# print(images)
+# random.shuffle(images)
+# print(images[:5])
 
 # --------------------------------------
 
 # TODO 查看dataloader原理
-train_data_list = get_files(config.train_data)
+# train_data_list = get_files(config.train_data)
 # train_dataloader = DataLoader(ChaojieDataset(train_data_list), batch_size=config.batch_size, shuffle=True,
 #                                pin_memory=True, num_workers=0)
 # for iter,(image,label) in enumerate(train_dataloader):

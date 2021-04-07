@@ -98,11 +98,16 @@
 **（以下用np表示）**
 1、`data.numpy()` 
 将tensor类型转换为numpy类型; 
+
 2、`np.equal(x1, x2)` 
 Return (x1 == x2) element-wise. 
 比较两个数组的值(若相等,在对应位置上取True，不等取False)；
+
 3、`np.all()`Test whether all array elements along a given axis evaluate to True.
+
 4、`if array`判断numpy数组是否为空，将列表作为布尔值，若不为空返回True，否则视为False;
+
+5、`np.newaxis`用于给数组增加维度：e.g.`aa=a[:,np.newaxis]`在第一维后加一维(1)
 
 ---
 ## torchvision
@@ -146,7 +151,32 @@ Pandas的基础结构可以分为两种：**数据框和序列**。
 
 **数据框（DataFrame）**是拥有轴标签的二维链表，换言之数据框是拥有标签的行和列组成的矩阵 - 列标签位列名，行标签为索引。Pandas中的行和列是Pandas序列 - 拥有轴标签的一维链表。
 
-`iterrows()` 是在数据框中的行进行迭代的一个生成器，它返回每行的索引及一个包含行本身的对象。
+1、`iterrows()` 是在数据框中的行进行迭代的一个生成器，它返回每行的索引及一个包含行本身的对象。
+
+2、dataframe的两种**加载**方式
+（1）以字典形式载入：`df = pd.DataFrame({"a":arr1,"b":arr2})`
+（2）将整个数组传入：`df = pd.DataFrame(data,columns=['a','b'])`注意，data的列数必须与columns匹配
+
+3、dataframe的切片
+（1）整数索引切片（前闭后开，不能单条）：`df[0:1]`
+（2）标签索引切片（前闭后闭）：`df[:'a']`
+（3）布尔数组索引：`df[[True,False]]` 
+（选取age值大于30的行）：`df[df['age']>30]`
+（选取出所有age大于30，且isMarried为no的行）：`df[(df['age']>30) & (df['isMarried']=='no')]` 注意&为按位与
+（4）列选取：`df[['name','age']]`
+（选取指定列）：`df[lambda df: df.columns[0]]`
+
+4、dataframe的**区域选取**
+（1）整数索引选取：`df.iloc[[1,3,5], :]` 
+（2）标签索引选取：`df.loc[['a','b','c'], :]`
+
+5、dataframe的**单元格选取**
+（1）标签索引选取：df.at['b','name']
+（2）整数索引选取：df.iat[1,0]
+
+6、其他注意事项
+（1）如果返回值包括单行多列或多行单列时，返回值为Series对象；如果返回值包括多行多列时，返回值为DataFrame对象；如果返回值仅为一个单元格（单行单列）时，返回值为基本数据类型
+（2）df[]用于选取行和列数据，iloc和loc用于选取区域
 
 ---
 

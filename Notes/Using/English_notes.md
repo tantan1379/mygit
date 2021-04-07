@@ -2,7 +2,9 @@
 
 ### 1、Professional
 
-#### ophthalmology
+#### ophthalmology(paper)
+
+curation (n.) 管理
 
 retinal (adj.)视网膜的
 
@@ -34,11 +36,25 @@ pathology (n.) 病理学
 
 anatomy (n.) 解剖学
 
+cardiovascular（adj.) 心血管的
 
+biomarkers (n.) 生物标志物
+
+treatment-naive （adj.) 未治疗的
+
+
+
+Schematic diagram 原理图
 
 retinal nerve fibre layer（RNFL） 视网膜神经纤维层
 
 subretinal pigment epithelium 视网膜色素上皮层
+
+ground true 金标准
+
+vascular endothelial growth factor(VEGF) 血管内皮生长因子
+
+
 
 diabetic  retinopathy(DR) 糖尿病性视网膜病变（白内障） 
 
@@ -48,9 +64,11 @@ macular hole（MH）黄斑裂孔
 
 serous retinal detachment（SRD）浆液性视网膜脱离
 
-ground true 金标准
+Alzheimer’s disease 阿尔兹海默症（老年痴呆）
 
-vascular endothelial growth factor(VEGF) 血管内皮生长因子
+retinal vein occlusion (RVO) 视网膜静脉阻塞
+
+
 
 
 
@@ -67,6 +85,10 @@ Application program interface(API) 应用程序接口
 ---
 
 ### 2.Word
+
+recurrence (n.) 再次发生
+
+heterogeneous （adj.) 由很多类组成的
 
 longitudinal （adj.) 纵向的
 
