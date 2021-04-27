@@ -37,6 +37,8 @@ git包括三个区域：工作区、暂存区、本地仓库，在远端（remot
 
 添加并提交(无法用于新文件)：`git commit -am ‘commits’`
 
+取消add：`git reset HEAD` 回退到上一次操作
+
 ##### 3、回退版本(取消commit)的内容
 
 回退到某一版本(commit)：`git reset [--soft | --mixed | --hard] [HEAD]`

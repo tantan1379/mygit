@@ -1,14 +1,21 @@
-# Pytorch
+# Python_Notes
 
 ## Basic knowledge
 
 * tensor比ndarray的优势在于可以使用GPU进行加速计算
+
 * 有多少个卷积核就有多少个feature map，一个feature map对应图像被提取的一种特征
+
 * output = ( input - K + 2 * P ) / S + 1 ，改变S可以改变输入的维度
+
 * DoubleTensor比FloatTensor有更高的精度，适合增强学习
+
 * 需要将model先移动到cuda后，再创建optimizer
+
 * 应该在optimizer更新后，再对scheduler进行更新
+
 * tensor和Tensor(FloatTensor)的区别在于，tensor只能接受现有的数据，Tensor可以接受数据的维度()或数据([])
+
 * 通常 a.方法和torch.方法(a)可以替换
 
 * 一些shape问题：
@@ -18,6 +25,8 @@
   （4）PIL读入的图片channel在最后，torch的channel在高宽的前面
   （5）pytorch中，参数矩阵w一般将输出后的通道写前面，即y=x@w.t() 注意：.t()方法只适合于2d的tensor
   （6）dataloader的迭代中，每次循环（每个batch）输入到网络的img的shape为(batchsize,channel,height,width)，label(target)的shape为(batchsize,)，经过model输出后output的shape为(batchsize,num_class)[实际上output是用数值大小描述每种类预测的概率，需要通过max等函数得到真实的预测值]
+  
+  
 
 ------
 
@@ -27,9 +36,7 @@
 
 * cpu-gpu：`data.cuda()`
   gpu-cpu：`data.cpu()`
-
 * 数组-tensor： `torch.from_numpy(data)`  
-
 * Tensor-数组 ：`data.numpy()`
 
 * 将tensor转换为python对象类型：`a.item()`：对只含一个元素的tensor使用
@@ -98,32 +105,198 @@
 * `torch.where(condition,x,y)` 判断condition中是否为True，成立取x中元素，不成立取y中元素
 * `torch.gather(input,dim,index)` 收集输入的特定维度指定位置的数值
 
+
+
 ---
-
-
 
 ## Numpy 
+
 **（以下用np表示）** 
+**综合**
 
-* `np.equal(x1, x2)` 
-  Return (x1 == x2) element-wise. 
+* Return (x1 == x2) element-wise. 
   比较两个数组的值(若相等,在对应位置上取True，不等取False)；
-
 * `np.all()`Test whether all array elements along a given axis evaluate to True.
-
 * `if array`判断numpy数组是否为空，将列表作为布尔值，若不为空返回True，否则视为False;
-
 * `np.newaxis`用于给数组增加维度：e.g.`aa=a[:,np.newaxis]`在第一维后加一维(1)
 * `np.hstack(*list，dim)`用于拼接矩阵
+* `np.squeeze(arr, axis)` 从给定数组的形状中删除一维的条目、
+* `np.any(arr,axis)` 判断沿dim维的各元素是否为True
+* `np.where(condition[, x, y])` 根据条件判断返回x中元素或者y中元素，如果不给定x,y则返回索引（相当于np.choose)
+* `np.choose(arr,choices)` 按照arr中的序号对choices中的数进行选择
+
+
+
+**属性**
+
+* `ndarray.ndim` 用于返回数组的维数，等于秩
+* `ndarray.shape` 表示数组的维度，返回一个元组
+
+
+
+**创建指定数组**
+
+* `np.zeros(dim，dtype=<class 'float'>)` # 注意dim为一个表示维度的tuple
+* `np.ones(dim, dtype=<class 'float'>)` # 注意dim为一个表示维度的tuple
+* `np.eye(N,M=None,k=0,dtype=<class 'float'>,order='C)` # N为行数，M为列数
+* `np.empty(dim,dtype)` # 创建空数组，但元素都不为0，接近0
+* `np.full(dim, val, dtype)` # zeros和ones的通用式
+
+
+
+**创建一个随机分布且指定维数的矩阵**
+
+* `np.random.rand(d0,d1,…dn)` # 0-1均匀分布
+
+* `my_mat41=np.random.randn(d0,d1,…dn)`# 正态分布
+
+* `my_mat42=np.random.randint(low,high=None,size=None,dtype)` # 整数
+
+  
+
+**自动生成narray（arrage为间距控制，linspace为元素数控制）**
+
+* `np.arange(start,end,step,dtype)` 
+
+* `np.linspace(start, end, element_nums, endpoint=True,dtype)` #包含end,endpoint决定是否包含end，dtype决定数组元素类型
+
+* `np.logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None)`
+
+  example:
+
+  a = np.arange(1, 5, 1) #[1 2 3 4]
+
+  b = np.linspace(1, 5, 5, endpoint=True, dtype=np.int32)` #[1 2 3 4 5]
+
+
 
 ---
-## Torchvision
+
+## Pandas
+
+Pandas的基础结构可以分为两种：**数据框和序列**。
+
+**数据框（DataFrame）**是拥有轴标签的二维链表，换言之数据框是拥有标签的行和列组成的矩阵 - 列标签位列名，行标签为索引。Pandas中的行和列是Pandas序列 - 拥有轴标签的一维链表。
+
+* 综合：
+  `iterrows()` 是在数据框中的行进行迭代的一个生成器，它返回每行的索引及一个包含行本身的对象。
+  `df.values`将返回构建dataframe的数组
+* dataframe的两种**加载**方式
+  （1）以字典形式载入：`df = pd.DataFrame({"a":arr1,"b":arr2})`
+  （2）将整个(二维)数组传入：`df = pd.DataFrame(data,columns=['a','b'])`注意，data的列数必须与columns匹配
+* dataframe的**切片**
+  （1）整数索引切片（前闭后开，不能单条）：`df[0:1]`
+  （2）标签索引切片（前闭后闭）：`df[:'a']`
+  （3）布尔数组索引：`df[[True,False]]` 
+  （选取age值大于30的行）：`df[df['age']>30]`
+  （选取出所有age大于30，且isMarried为no的行）：`df[(df['age']>30) & (df['isMarried']=='no')]` 注意&为按位与
+  （4）列选取：`df[['name','age']]`
+  （选取指定列）：`df[lambda df: df.columns[0]]`
+* dataframe的**区域选取**
+  （1）整数索引选取：`df.iloc[[1,3,5], :]` 
+  （2）标签索引选取：`df.loc[['a','b','c'], :]`
+* dataframe的**单元格选取**
+  （1）标签索引选取：df.at['b','name']
+  （2）整数索引选取：df.iat[1,0]
+* 其他注意事项
+  （1）如果返回值包括单行多列或多行单列时，返回值为Series对象；如果返回值包括多行多列时，返回值为DataFrame对象；如果返回值仅为一个单元格（单行单列）时，返回值为基本数据类型
+  （2）df[]用于选取行和列数据，iloc和loc用于选取区域
+
+
+
+---
+
+## Image procession
+
+* **Image类**
+
+  ```python
+  from PIL import Image
+  img = Image.open(path) # 打开文件，并以Image格式返回，返回值可以直接输入到transforms中
+  img.convert(mode) # 转换类型
+  img_array = np.asarray(img) # 图片转为矩阵
+  img = Image.fromarray(img_array) # 矩阵转为Image对象
+  ```
+
+* **pyplot类**
+
+  ``` python
+  import matplotlib.pyplot as plt
+  # 显示图片
+  img_array = plt.imread(path) # 直接以矩阵形式返回
+  # img = Image.open(path)
+  ax1 = fig.add_subplot(211)
+  img = plt.imshow(img_array, cmap=None) # 输入一个矩阵或PILImage类，返回一个AxesImage对象
+  fig = plt.figure() # 创建一个figure对象
+  fig.suptitle("title")
+  plt.axis() # 显示坐标轴
+  plt.show() # 展示图片（jupyter不需要）
+  
+  # 画曲线 OO-style
+  x = np.linspace(0, 2, 100)
+  fig, ax = plt.subplots()  # Create a figure and an axes.
+  ax.plot(x, x, label='linear')  # Plot some data on the axes.
+  ax.plot(x, x**2, label='quadratic')  # Plot more data on the axes...
+  ax.plot(x, x**3, label='cubic')  # ... and some more.
+  ax.set_xlabel('x label')  # Add an x-label to the axes.
+  ax.set_ylabel('y label')  # Add a y-label to the axes.
+  ax.set_title("Simple Plot")  # Add a title to the axes.
+  ax.legend()  # Add a legend.（表明图例）
+  ```
+
+* **cv2类**
+
+  ```python
+  import python
+  img = cv2.imread(filepath,flags)     #读入一张图像(flag=cv2.IMREAD_COLOR  cv2.IMREAD_GRAYSCALE  cv2.IMREAD_UNCHANGED)
+  img2 = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY) #灰度化：彩色图像转为灰度图像
+  img3 = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB) #彩色化：灰度图像转为彩色图像
+  cv2.resize(image, image2,dsize) #图像缩放：(输入原始图像，输出新图像，图像的大小)
+  cv2.flip(img,flipcode) #图像翻转，flipcode控制翻转效果。
+  cv2.imshow(wname,img)     #显示图像
+  cv2.imwrite(file，img，num) # 保存一张图片（num表示压缩级别）
+  
+  ```
+
+  
+
+
+
+---
+
+## File operation
+
+* **重命名文件：**`os.rename(src,dst)` src为源文件（原名），dst为目标文件（新名）
+
+* **删除文件：**`os.remove(path)`
+
+* **复制文件：**`shutil.copyfile(src,dst)`
+
+* **返回所有匹配的文件路径列表：**`glob.glob()` ”\*”, “?”, “[]”。”*”匹配0个或多个字符；”?”匹配单个字符；”[]”匹配指定范围内的字符
+
+* **创建/删除文件夹：**
+
+`os.mkdir(path)` # 只能创建一级目录
+`os.mkdirs(path)` # 可以创建多级目录
+`os.rmdir(path)` # 文件必须存在，只能删除空目录
+`shutil.retree(path)` # （非空）删除整个目录（先导入）
+
+* **获取路径内容：**
+
+`os.listdir(path)` # 返回指定路径下的文件和文件夹列表
+`os.scandir(path)` # 新版本用法，返回一个迭代器对象
+`os.getcwd()` # 获取当前目录
+`os.path.join(path1,path2)` # 获取拼接的目录
+`os.path.split(path)` # 将目录分割为目录和文件名以二元组返回Torchvision
+
 1、在datasets模块中保存着各类数据集
 2、在models模块中保存搭建好的网络（可以不加载数据）
 3、在transforms模块中封装了一些处理数据的方法
 **Note:** 
 1.torchvision的datasets的输出是[0,1]的PILImage，所以我们需要归一化为[-1,1]的Tensor
 2.数据增强虽然会使训练过程收敛变慢，但可以提高测试集准确度，防止过拟合，提高模型的泛化能力。 
+
+
 
 ---
 
@@ -150,46 +323,13 @@ shuffle：设置为True的时候，每个epoch都会打乱数据集
 collate_fn：如何取样本的，我们可以定义自己的函数来准确地实现想要的功能 
 drop_last：告诉如何处理数据集长度除于batch_size余下的数据。True就抛弃，否则保留
 
----
 
-## Pandas
-
-Pandas的基础结构可以分为两种：**数据框和序列**。
-
-**数据框（DataFrame）**是拥有轴标签的二维链表，换言之数据框是拥有标签的行和列组成的矩阵 - 列标签位列名，行标签为索引。Pandas中的行和列是Pandas序列 - 拥有轴标签的一维链表。
-
-1、`iterrows()` 是在数据框中的行进行迭代的一个生成器，它返回每行的索引及一个包含行本身的对象。
-
-2、dataframe的两种**加载**方式
-（1）以字典形式载入：`df = pd.DataFrame({"a":arr1,"b":arr2})`
-（2）将整个数组传入：`df = pd.DataFrame(data,columns=['a','b'])`注意，data的列数必须与columns匹配
-
-3、dataframe的切片
-（1）整数索引切片（前闭后开，不能单条）：`df[0:1]`
-（2）标签索引切片（前闭后闭）：`df[:'a']`
-（3）布尔数组索引：`df[[True,False]]` 
-（选取age值大于30的行）：`df[df['age']>30]`
-（选取出所有age大于30，且isMarried为no的行）：`df[(df['age']>30) & (df['isMarried']=='no')]` 注意&为按位与
-（4）列选取：`df[['name','age']]`
-（选取指定列）：`df[lambda df: df.columns[0]]`
-
-4、dataframe的**区域选取**
-（1）整数索引选取：`df.iloc[[1,3,5], :]` 
-（2）标签索引选取：`df.loc[['a','b','c'], :]`
-
-5、dataframe的**单元格选取**
-（1）标签索引选取：df.at['b','name']
-（2）整数索引选取：df.iat[1,0]
-
-6、其他注意事项
-（1）如果返回值包括单行多列或多行单列时，返回值为Series对象；如果返回值包括多行多列时，返回值为DataFrame对象；如果返回值仅为一个单元格（单行单列）时，返回值为基本数据类型
-（2）df[]用于选取行和列数据，iloc和loc用于选取区域
 
 ---
 
 ## Optimizer & Scheduler & Loss_fn
 
-**优化器设置：**
+* **优化器设置：**
 
 ```python
 optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum,weight_decay=args.weight_decay)
@@ -197,7 +337,7 @@ optimizer = torch.optim.Adam(params, lr=0.001, betas=(0.9, 0.999), eps=1e-08, we
 optimizer = torch.optim.RMSprop(params, lr=0.01, alpha=0.99, eps=1e-08, weight_decay=0, momentum=0, centered=False)
 ```
 
-**学习率衰减设置：**
+* **学习率衰减设置：**
 
 ```python
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10, verbose=False, threshold=0.0001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
@@ -213,7 +353,7 @@ for epoch in range(epochs):
     scheduler.step()
 ```
 
-**损失函数设置：**
+* **损失函数设置：**
 
 ```python
 criterion = torch.nn.CrossEntropyLoss()
@@ -224,16 +364,16 @@ criterion = torch.nn.BCELoss()
 
 ## Others
 
-1、`torch.backends.cudnn.benchmark = True`
+* `torch.backends.cudnn.benchmark = True`
 大部分情况下，设置这个flag可以让内置的cuDNN的auto-tuner自动寻找最适合当前配置的高效算法，来达到优化运行效率的问题
 
-2、`sum(p.numel() for p in model.parameters() if p.requires_grad)` 计算网络的参数量
+* `sum(p.numel() for p in model.parameters() if p.requires_grad)` 计算网络的参数量
 
 
 
 ## Copy
 
-##### Confusion Matrix
+**Confusion Matrix**
 
 ```python
 class ConfusionMatrix(object):
