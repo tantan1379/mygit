@@ -2,7 +2,7 @@ class DefaultConfigs(object):
     # ----------------------------------------------------------------
     # 1.string parameters
     # ----------------------------------------------------------------
-    data_path = "F:\\Dataset\\AMD_TimeSeries_CL\\4_to_9_single\\"
+    data_path = "F:\\Dataset\\AMD\\AMD_TimeSeries_CL\\4_to_9_single\\"
     gpus = '0'
     model_name = 'ResNetLSTM'
     # ----------------------------------------------------------------
@@ -15,7 +15,7 @@ class DefaultConfigs(object):
     # num_pat = 104
     seq_len = 18
     # input_channel = 6
-    batch_size = 1
+    batch_size = 2
     img_height = 224
     img_width = 224
     center_crop_height = 112

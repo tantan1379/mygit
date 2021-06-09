@@ -74,9 +74,10 @@ if __name__ == '__main__':
                 model2.train()
                 target = torch.from_numpy(
                     np.array(target)).squeeze(1).long().cuda()
-                for one_batch in range(data.size(0)):
-                    one_batch_feature = torch.zeros(
+                
+                one_batch_feature = torch.zeros(
                         data.size(0), data.size(1), 2048).cuda()
+                for one_batch in range(data.size(0)):
                     merged_channel_feature = torch.zeros(data.size(1), 2048)
                     for one_pic in range(data.size(1)):
                         one_p_3d = torch.zeros(
@@ -84,9 +85,10 @@ if __name__ == '__main__':
                         one_p = data[one_batch, one_pic]
                         for i in range(3):
                             one_p_3d[i] = one_p
-                        one_p_3d = model1(one_p_3d.unsqueeze(0))
-                        merged_channel_feature[one_pic] = one_p_3d
+                        one_p_3d_feature = model1(one_p_3d.unsqueeze(0))
+                        merged_channel_feature[one_pic] = one_p_3d_feature
                     one_batch_feature[one_batch] = merged_channel_feature
+
                 pred = model2(one_batch_feature)
                 loss = criteria(pred, target)
                 precision1_train = accuracy(pred, target)

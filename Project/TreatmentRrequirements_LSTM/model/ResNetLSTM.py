@@ -50,15 +50,15 @@ class LSTM(nn.Module):
         return out_last
 
 
-class ResNetLSTM(nn.Module):
-    def __init__(self,lstm_hidden_size=2000):
-        super(ResNetLSTM,self).__init__()
-        self.LSTM = LSTM()
-        self.get_feature = ExtractFeature()
+# class ResNetLSTM(nn.Module):
+#     def __init__(self,lstm_hidden_size=2000):
+#         super(ResNetLSTM,self).__init__()
+#         self.LSTM = LSTM()
+#         self.get_feature = ExtractFeature()
 
-    def forward(self,x):
-        for one_pic in range(x.size(0)):
-            one_pic_feature_extracted = self.get_feature(x[one_pic])
+#     def forward(self,x):
+#         for one_pic in range(x.size(0)):
+#             one_pic_feature_extracted = self.get_feature(x[one_pic])
             
 
 

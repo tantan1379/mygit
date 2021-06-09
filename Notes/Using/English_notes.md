@@ -1,8 +1,10 @@
 # Vocabulary
 
-### 1、Professional
+---
 
-#### ophthalmology(paper)
+## 1 profession
+
+### ophthalmology(paper)
 
 curation (n.) 管理
 
@@ -44,7 +46,7 @@ treatment-naive (adj.) 未治疗的
 
 retinal nerve fibre layer(RNFL) 视网膜神经纤维层
 
-subretinal pigment epithelium 视网膜色素上皮层
+subretinal pigment epithelium(RPE) 视网膜色素上皮层
 
 visual acuity 视力
 
@@ -56,6 +58,16 @@ requirement score(RQS) 需求评分
 
 vascular endothelial growth factor(VEGF) 血管内皮生长因子
 
+best-corrected visual acuity (BCVA)  最佳矫正视力
+
+
+
+#### Disease
+
+subretinal fluid(SRF) 视网膜下液（色素上皮层与脉络膜之间）
+
+intraretinal fluid(IRF) 视网膜层间积液
+
 diabetic  retinopathy(DR) 糖尿病性视网膜病变(白内障) 
 
 cystoid macular edema(CME)黄斑囊样水肿
@@ -64,33 +76,39 @@ macular hole(MH)黄斑裂孔
 
 serous retinal detachment(SRD)浆液性视网膜脱离
 
-Alzheimer’s disease 阿尔兹海默症(老年痴呆)
-
 retinal vein occlusion (RVO) 视网膜静脉阻塞
 
-best-corrected visual acuity (BCVA)  最佳矫正视力
+Alzheimer’s disease 阿尔兹海默症(老年痴呆)
 
 
 
-#### computerese and algorithm
+### computerese and algorithm
+
+coordinate 坐标
 
 access-specifier 访问修饰符
 
+cardinality 基数
+
 interpolation 插值
 
-deviation (n.)误差   
+deviation  误差   
 
-pixwise (adj.)像素级的   
+pixwise 像素级的   
 
 stratify 分层，分类
 
-overhead (n.)开销    
+overhead 开销    
 
-frame (n.)帧   
+frame 帧   
 
 replicate 复制
 
 robustness 健壮性
+
+spatial dependencies 空间依赖性
+
+uniform resource locator 统一资源定位符
 
 Application program interface(API) 应用程序接口
 
@@ -102,9 +120,37 @@ aggregate 聚合，加和
 
 ---
 
-### 2.Word
+## 2 Common
 
-irreversible (adj.) 不可逆的
+### Word
+
+synthesis (n.) 合成
+
+leverage (v.) 利用
+
+objective (n.) 目标
+
+intrinsically (adv.) 本质上
+
+opt (v.) 选择
+
+formally (adv.) 形式上
+
+mitigate (v.) 缓解
+
+consequently (adv.) 因此
+
+terminology (n.) 术语
+
+forgo (v.) 放弃
+
+indiscriminate (adj.) 任意的，无差别的
+
+correlation (n.) 相关性
+
+interleave (v.) 交叉
+
+**irreversible (adj.) 不可逆的**
 
 discrepancy (n.) 差异
 
@@ -116,15 +162,15 @@ forge (v.) 形成
 
 resolve (v.) 溶解；解决
 
-monotonically (adv.) 单调地
+**monotonically (adv.) 单调地**
 
-paradigm （n.) 范式
+**paradigm (n.) 范式**
 
-homogeneous (adj.) 均匀的，同种的
+**homogeneous (adj.) 均匀的，同种的**
 
 recurrence (n.) 再次发生
 
-heterogeneous (adj.) 由很多类组成的
+**heterogeneous (adj.) 由很多类组成的**
 
 longitudinal (adj.) 纵向的
 
@@ -172,17 +218,19 @@ deformations (n.) 变形
 
 asymptotically (adv.)渐进地
 
-retain (v.)保持
+retain (v.) 	保持
 
 generalization (n.)泛化性
 
 indispensable (adj.)不可缺少的
 
----
 
-### 3.Match
+
+### Match
 
 the extent of ..的程度
+
+block diagram 框图
 
 protocol specified criteria in the ...协议中制定的标准
 
@@ -218,9 +266,11 @@ reach maturity 达到成熟
 
 The takeaway is that... 结论是
 
+In the aggregate 总的来说
 
 
-### 4.Conjunction
+
+### Conjunction
 
 nevertheless 然而
 

@@ -70,12 +70,16 @@ def main():
     with torch.no_grad():
         for val_data in test_dataloader:
             val_images, val_labels = val_data
+            # print(val_images)
+            print("real label",val_labels)
             # print(val_images.shape)
             outputs = model(val_images.cuda())
+            # print(outputs)
             # print(outputs)
             # outputs = torch.softmax(outputs, dim=1)
             # print(outputs.shape)
             outputs = torch.argmax(outputs, dim=1)
+            print("prediction",outputs)
             confusion.update(outputs.to("cpu").numpy(),
                              val_labels.to("cpu").numpy())
     confusion.plot()

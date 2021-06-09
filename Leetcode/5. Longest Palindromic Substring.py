@@ -1,7 +1,24 @@
 '''
 Given a string s, return the longest palindromic substring in s. 回文字符串
 '''
+# Violent O(n^3)
+def isPalindrome(s):
+    for i in range(len(s)//2):
+        if(s[i]!=s[len(s)-i-1]):
+            return False
+    return True
 
+def longestPalindrome_v(s):
+    max_len = 0
+    for i in range(len(s)):
+        for j in range(i+1,len(s)+1):
+            sub_s = s[i:j]
+            if(isPalindrome(sub_s) and max_len<len(sub_s)):
+                max_len = len(sub_s)
+                ans = sub_s[:]
+    return ans
+# ----------------------------------------------------------------
+# Dynamic planning O(n^2)
 def longestPalindrome(s):
     n = len(s)
     if n < 2:
@@ -11,6 +28,7 @@ def longestPalindrome(s):
     begin = 0
     # dp[i][j] 表示 s[i..j] 是否是回文串
     dp = [[False] * n for _ in range(n)]
+    # print(dp)
     for i in range(n):
         dp[i][i] = True
     
@@ -24,9 +42,9 @@ def longestPalindrome(s):
             # 如果右边界越界，就可以退出当前循环
             if j >= n:
                 break
-                
+
             if s[i] != s[j]:
-                dp[i][j] = False 
+                dp[i][j] = False
             else:
                 if j - i < 3:
                     dp[i][j] = True
@@ -39,3 +57,6 @@ def longestPalindrome(s):
                 begin = i
     return s[begin:begin + max_len]
 
+
+if __name__ == "__main__":
+    print(longestPalindrome_v("1423214"))

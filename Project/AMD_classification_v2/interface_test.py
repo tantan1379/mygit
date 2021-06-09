@@ -118,23 +118,27 @@ from PIL import Image
 
 # ----------------------------------------------------------------
 #TODO densenet
-import torch.nn as nn 
-import torchvision as tv
-class ExtractFeature_(nn.Module):
-    def __init__(self):
-        super(ExtractFeature_, self).__init__()
-        self.densenet = tv.models.densenet121(pretrained=True)
-        self.final_pool = nn.AdaptiveAvgPool2d(1)
-        # self.final_pool = torch.nn.MaxPool2d(3, 2)
+# import torch.nn as nn 
+# import torchvision as tv
+# class ExtractFeature_(nn.Module):
+#     def __init__(self):
+#         super(ExtractFeature_, self).__init__()
+#         self.densenet = tv.models.densenet121(pretrained=True)
+#         self.final_pool = nn.AdaptiveAvgPool2d(1)
+#         # self.final_pool = torch.nn.MaxPool2d(3, 2)
 
-    def forward(self,x):
-        x = self.densenet.conv0(x)
-        x = self.densenet.norm0(x)
-        x = self.densenet.relu0(x)  
-        x = self.final_pool(x).squeeze()
-        # x = x.flatten(start_dim=1)
-        return x
+#     def forward(self,x):
+#         x = self.densenet.conv0(x)
+#         x = self.densenet.norm0(x)
+#         x = self.densenet.relu0(x)  
+#         x = self.final_pool(x).squeeze()
+#         # x = x.flatten(start_dim=1)
+#         return x
 
-x = torch.Tensor(3,224,224)
-model = ExtractFeature_()
-model(x)
+# x = torch.Tensor(3,224,224)
+# model = ExtractFeature_()
+# model(x)
+
+# ----------------------------------------------------------------
+#TODO [0*5]
+print([0.0]*5)

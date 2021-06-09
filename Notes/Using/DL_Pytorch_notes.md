@@ -60,8 +60,10 @@
 #### **Dimension**
 
 * 调整Tensor的形状（常用）：`tensor.view()` e.g.:`x=x.view(x.size(0),-1)`
+  **注意点：**1、在神经网络中图像的维度为(batchsize,channel,height,width),一定要以这个顺序和逻辑进行view；view前后的size要相同 2、view方法实际上创建了一个视图，该视图共享底层的数据，修改该视图会修改原来的数据，因此我们需要保证**底层数据内存空间连续**，否则需要调用contiguous()
 
-  注意点：在神经网络中图像的维度为(batchsize,channel,height,width),一定要以这个顺序和逻辑进行view；view前后的size要相同
+  改变形状（同上）：`tensor.reshape(*args)`
+  **注意点：**reshape()方法的返回值既可以是视图，也可以是副本。当满足连续性条件时返回view，否则返回副本（等价于先调用contiguous()方法创建一块内存空间保证数据的连续性，再使用view() ）
 
 * 修改维度
   （增维）：`tensor.unsqueeze(pos)` 在posi前的一个位置加一维
@@ -111,15 +113,12 @@
 ## Numpy 
 
 **（以下用np表示）** 
-**综合**
+**判断**
 
 * Return (x1 == x2) element-wise. 
   比较两个数组的值(若相等,在对应位置上取True，不等取False)；
 * `np.all()`Test whether all array elements along a given axis evaluate to True.
 * `if array`判断numpy数组是否为空，将列表作为布尔值，若不为空返回True，否则视为False;
-* `np.newaxis`用于给数组增加维度：e.g.`aa=a[:,np.newaxis]`在第一维后加一维(1)
-* `np.hstack(*list，dim)`用于拼接矩阵
-* `np.squeeze(arr, axis)` 从给定数组的形状中删除一维的条目、
 * `np.any(arr,axis)` 判断沿dim维的各元素是否为True
 * `np.where(condition[, x, y])` 根据条件判断返回x中元素或者y中元素，如果不给定x,y则返回索引（相当于np.choose)
 * `np.choose(arr,choices)` 按照arr中的序号对choices中的数进行选择
@@ -167,7 +166,18 @@
 
   b = np.linspace(1, 5, 5, endpoint=True, dtype=np.int32)` #[1 2 3 4 5]
 
+**维度操作**
 
+* `np.newaxis`用于给数组增加维度：e.g.`aa=a[:,np.newaxis]`在第一维后加一维(1)
+* `np.squeeze(arr, axis)` 从给定数组的形状中删除一维的条目、
+* `np.reshape(array,size)` 返回修改形状的矩阵，特殊用法：`array_new = np.reshape(array,array.shape+(1,))` 在array的最后添加一维，(1,)加在前面则在array的最前面增加一维，需要注意对图像通道数的操作
+
+
+
+**其他操作**
+
+* `np.hstack(*list，dim)`垂直方向拼接矩阵
+* `np.vstack(*list,dim)` 水平方向拼接矩阵
 
 ---
 
@@ -242,57 +252,72 @@ python操作excel主要用到xlrd和xlwt这两个库，即xlrd是读excel，xlwt
 
 ---
 
-## Image procession
+## Image processing
 
-* **Image类**
+#### Image
 
-  ```python
-  from PIL import Image
-  img = Image.open(path) # 打开文件，并以Image格式返回，返回值可以直接输入到transforms中
-  img.convert(mode) # 转换类型
-  img_array = np.asarray(img) # 图像转矩阵
-  img = Image.fromarray(img_array) # 矩阵转为Image对象
-  ```
+```python
+from PIL import Image
+img = Image.open(path) # 打开文件，并以Image格式返回，返回值可以直接输入到transforms中
+img.convert(mode) # 转换类型
+img_array = np.asarray(img) # 图像转矩阵
+# img_array = np.array(img) # 同上
+img = Image.fromarray(img_array) # 矩阵转为Image对象
+```
 
-* **pyplot类**
+#### pyplot
 
-  ``` python
-  import matplotlib.pyplot as plt
-  # 显示图片
-  img_array = plt.imread(path) # 直接以矩阵形式返回
-  # img = Image.open(path)
-  fig = plt.figure() # 创建一个figure对象
-  ax1 = fig.add_subplot(211)
-  img = plt.imshow(img_array, cmap=None) # 输入一个矩阵或PILImage类，返回一个AxesImage对象
-  fig.suptitle("title")
-  plt.axis() # 显示坐标轴
-  plt.show() # 展示图片（jupyter不需要）
-  
-  # 画曲线 OO-style
-  x = np.linspace(0, 2, 100)
-  fig, ax = plt.subplots()  # Create a figure and an axes.
-  ax.plot(x, x, label='linear')  # Plot some data on the axes.
-  ax.plot(x, x**2, label='quadratic')  # Plot more data on the axes...
-  ax.plot(x, x**3, label='cubic')  # ... and some more.
-  ax.set_xlabel('x label')  # Add an x-label to the axes.
-  ax.set_ylabel('y label')  # Add a y-label to the axes.
-  ax.set_title("Simple Plot")  # Add a title to the axes.
-  ax.legend()  # Add a legend.（表明图例）
-  ```
+``` python
+import matplotlib.pyplot as plt
+# 显示图片
+img_array = plt.imread(path) # 直接以矩阵形式返回
+# img = Image.open(path)
+fig = plt.figure() # 创建一个figure对象
+ax1 = fig.add_subplot(211)
+img = plt.imshow(img_array, cmap=None) # 输入一个矩阵或PILImage类，返回一个AxesImage对象
+fig.suptitle("title")
+plt.axis() # 显示坐标轴
+plt.show() # 展示图片（jupyter不需要）
+plt.savefig(desimgpath)
 
-* **cv2类**
+# 画曲线 OO-style
+x = np.linspace(0, 2, 100)
+fig, axes = plt.subplots(1,3)  # Create a figure and an axes.
+axes[0].plot(x, x, label='linear')  # Plot some data on the axes.
+axes[1].plot(x, x**2, label='quadratic')  # Plot more data on the axes...
+axes[2].plot(x, x**3, label='cubic')  # ... and some more.
+axes.set_xlabel('x label')  # Add an x-label to the axes.
+axes.set_ylabel('y label')  # Add a y-label to the axes.
+ax.set_title("Simple Plot")  # Add a title to the axes.
+ax.legend()  # Add a legend.（表明图例）
+# 画散点
+ax.scatter(x,x)
+```
 
-  ```python
-  import python
-  img = cv2.imread(filepath,flags)     #读入一张图像(flag=cv2.IMREAD_COLOR  cv2.IMREAD_GRAYSCALE  cv2.IMREAD_UNCHANGED)
-  img2 = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY) #灰度化：彩色图像转为灰度图像
-  img3 = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB) #彩色化：灰度图像转为彩色图像
-  cv2.resize(image, image2,dsize) #图像缩放：(输入原始图像，输出新图像，图像的大小)
-  cv2.flip(img,flipcode) #图像翻转，flipcode控制翻转效果。
-  cv2.imshow(wname,img)     #显示图像
-  cv2.imwrite(file，img，num) # 保存一张图片（num表示压缩级别）
-  
-  ```
+#### cv2
+
+```python
+import python
+import cv2
+
+img = cv2.imread(filepath,flags)     #读入一张图像(flag=cv2.IMREAD_COLOR  cv2.IMREAD_GRAYSCALE  cv2.IMREAD_UNCHANGED)
+img2 = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY) #灰度化：彩色图像转为灰度图像
+img3 = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB) #彩色化：灰度图像转为彩色图像
+cv2.resize(image, image2,dsize) #图像缩放：(输入原始图像，输出新图像，图像的大小)
+cv2.flip(img,flipcode) #图像翻转，flipcode控制翻转效果。
+cv2.imshow(wname,img)     #显示图像
+cv2.imwrite(file，img，num) # 保存一张图片（num表示压缩级别）
+```
+
+#### **SimpITK**
+
+```python
+import SimpleITK as sitk
+img_array = sitk.GetArrayFromImage(sitk.ReadImage(imgpath)) # 读取医学影像文件的矩阵
+sitk.WriteImage(desimgpath) # 保存图像
+```
+
+
 
 
 ---

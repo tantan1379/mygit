@@ -21,6 +21,8 @@ def lengthOfLongestSubstring(s):
 # 思路：枚举以每一个字符开头的最大非重复子字符串。
 # 每次移动窗口都去除哈希集中当前的前一个字符，并从上一个最大非重复子字符串的最后一个字符开始向后扩展
 def lengthOfLongestSubstring_(s):
+    if len(s)<2:
+        return len(s)
     occ = set() # 哈希集合，记录每个字符是否出现过
     rk, ans = -1, 1 # rk为右指针
     for i in range(len(s)): # i为左指针

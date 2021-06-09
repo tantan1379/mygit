@@ -55,7 +55,7 @@ class TreatmentRequirement(Dataset):
                         continue
                 vpath = patpath + os.sep + one_v
                 for one_pic in os.listdir(vpath):
-                    frames_one_pat.append(os.path.join(patpath,one_v,one_pic))
+                    frames_one_pat.append(vpath+os.sep+one_pic)
             imgs.append(frames_one_pat)
             labelPath = patpath + os.sep + 'label.txt'
             tx = open(labelPath)
@@ -69,36 +69,36 @@ class TreatmentRequirement(Dataset):
 
     def __getitem__(self,index):
         img, label = self.imgs[index], self.labels[index]
-        # trans = {
-        #     "train": transforms.Compose([
-        #         lambda x: Image.open(x),
-        #         # transforms.RandomRotation(15),
-        #         transforms.CenterCrop((config.center_crop_height, config.center_crop_width)),
-        #         transforms.Resize((int(config.img_height),
-        #             int(config.img_width))),
-        #         transforms.ToTensor(),
-        #         transforms.Normalize(0.4630,0.2163)
-        #     ]),
-        #     "val": transforms.Compose([
-        #         lambda x: Image.open(x),
-        #         transforms.CenterCrop((config.center_crop_height, config.center_crop_width)),
-        #         transforms.Resize((int(config.img_height),
-        #             int(config.img_width))),
-        #         transforms.ToTensor(),
-        #         transforms.Normalize(0.4630,0.2163)
-        #     ])}
+        trans = {
+            "train": transforms.Compose([
+                lambda x: Image.open(x),
+                # transforms.RandomRotation(15),
+                transforms.CenterCrop((config.center_crop_height, config.center_crop_width)),
+                transforms.Resize((int(config.img_height),
+                    int(config.img_width))),
+                transforms.ToTensor(),
+                transforms.Normalize(0.4630,0.2163)
+            ]),
+            "val": transforms.Compose([
+                lambda x: Image.open(x),
+                transforms.CenterCrop((config.center_crop_height, config.center_crop_width)),
+                transforms.Resize((int(config.img_height),
+                    int(config.img_width))),
+                transforms.ToTensor(),
+                transforms.Normalize(0.4630,0.2163)
+            ])}
 
         # -------------------------------
         # no transform
         # -------------------------------
-        trans = transforms.Compose([
-                lambda x: Image.open(x),
-                transforms.Resize((int(config.img_height),
-                    int(config.img_width))),
-                # transforms.CenterCrop((config.img_height, config.img_width)),
-                transforms.ToTensor(),
-                transforms.Normalize(0.4630,0.2163)
-        ])
+        # trans = transforms.Compose([
+        #         lambda x: Image.open(x),
+        #         transforms.Resize((int(config.img_height),
+        #             int(config.img_width))),
+        #         # transforms.CenterCrop((config.img_height, config.img_width)),
+        #         transforms.ToTensor(),
+        #         transforms.Normalize(0.4630,0.2163)
+        # ])
 
         # -------------------------------
         # 6 channels proprecess 
@@ -145,7 +145,10 @@ class TreatmentRequirement(Dataset):
         all_v_img = torch.zeros(config.seq_len,config.img_height,config.img_width)
         for one_pic in range(config.seq_len):
             single_img = img[one_pic]
-            single_img = trans(single_img)
+            if self.mode=="train":
+                single_img = trans["train"](single_img)
+            else:
+                single_img = trans["val"](single_img)
             all_v_img[one_pic] = single_img
         img = all_v_img
         label = torch.Tensor(label)

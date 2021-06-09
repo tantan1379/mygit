@@ -51,6 +51,8 @@ class ChaojieDataset(Dataset):
         else:
             img = trans['val'](img)
         label = torch.tensor(label)
+        print(img.shape)
+        print(label.shape)
         return img, label
 
     def __len__(self):
