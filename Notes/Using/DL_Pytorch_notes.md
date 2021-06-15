@@ -300,13 +300,20 @@ ax.scatter(x,x)
 import python
 import cv2
 
-img = cv2.imread(filepath,flags)     #读入一张图像(flag=cv2.IMREAD_COLOR  cv2.IMREAD_GRAYSCALE  cv2.IMREAD_UNCHANGED)
+img = cv2.imread(filepath,flags)     #读入一张图像[文件名必须为英文](flag=cv2.IMREAD_COLOR  cv2.IMREAD_GRAYSCALE  cv2.IMREAD_UNCHANGED)
+#读入中文路径方法
+def cv_imread(file_path = ""):
+    img_mat=cv2.imdecode(np.fromfile(file_path,dtype=np.uint8),-1)
+    return img_mat
+def cv_imwrite(file_path , frame ): 
+    cv2.imencode('.jpg', frame)[1].tofile(file_path)
+
 img2 = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY) #灰度化：彩色图像转为灰度图像
 img3 = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB) #彩色化：灰度图像转为彩色图像
 cv2.resize(image, image2,dsize) #图像缩放：(输入原始图像，输出新图像，图像的大小)
 cv2.flip(img,flipcode) #图像翻转，flipcode控制翻转效果。
 cv2.imshow(wname,img)     #显示图像
-cv2.imwrite(file，img，num) # 保存一张图片（num表示压缩级别）
+cv2.imwrite(filepath，img，num) # 保存一张图片（num表示压缩级别）
 ```
 
 #### **SimpITK**

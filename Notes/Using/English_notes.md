@@ -18,7 +18,9 @@ edema (n.)水肿
 
 angiography (n.)血管造影术
 
-metabolic (adj.)代谢的
+intractable (adj.) 棘手的
+
+metabolic (adj.) 代谢的
 
 morbidity (n.)发病率；病态
 
@@ -26,17 +28,13 @@ fovea (n.) 中央凹
 
 macula (n.) 黄斑
 
-neovascular (adj.) 新生血管的
+neovascular (adj.) 新生血管的	cardiovascular(adj.) 心血管的
 
 pro-re-nata(PRN) 随机应变的
 
-pathology (n.) 病理学
-
-pathological (adj.) 病理
+pathology (n.) 病理学	pathological (adj.) 病理
 
 anatomy (n.) 解剖学
-
-cardiovascular(adj.) 心血管的
 
 VEGF 血管内皮生长因子
 
@@ -44,17 +42,15 @@ biomarkers (n.) 生物标志物
 
 treatment-naive (adj.) 未治疗的
 
-retinal nerve fibre layer(RNFL) 视网膜神经纤维层
+retinal nerve fiber layer(RNFL) 视网膜神经纤维层
 
-subretinal pigment epithelium(RPE) 视网膜色素上皮层
+retinal pigment epithelium(RPE) 视网膜色素上皮层
 
 visual acuity 视力
 
 intravitreal 玻璃体的
 
 ground true 金标准
-
-requirement score(RQS) 需求评分
 
 vascular endothelial growth factor(VEGF) 血管内皮生长因子
 
@@ -68,13 +64,13 @@ subretinal fluid(SRF) 视网膜下液（色素上皮层与脉络膜之间）
 
 intraretinal fluid(IRF) 视网膜层间积液
 
-diabetic  retinopathy(DR) 糖尿病性视网膜病变(白内障) 
+diabetic retinopathy(DR) 糖尿病性视网膜病变(白内障) 
 
-cystoid macular edema(CME)黄斑囊样水肿
+cystoid macular edema(CME) 黄斑囊样水肿
 
-macular hole(MH)黄斑裂孔
+macular hole(MH) 黄斑裂孔
 
-serous retinal detachment(SRD)浆液性视网膜脱离
+serous retinal detachment(SRD) 浆液性视网膜脱离
 
 retinal vein occlusion (RVO) 视网膜静脉阻塞
 
@@ -123,6 +119,22 @@ aggregate 聚合，加和
 ## 2 Common
 
 ### Word
+
+Albeit (prep.) 虽然
+
+mainstay (n.) 支柱
+
+subsume (v.) 把..归入 
+
+demystify (v.) 阐明
+
+coin (v.) 创造
+
+aforementioned (adj.) 上述的
+
+agnostic (adj.) 不可知的
+
+ingredient (n.) 元素，要素
 
 synthesis (n.) 合成
 

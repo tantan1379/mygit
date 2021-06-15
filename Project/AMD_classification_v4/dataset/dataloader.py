@@ -33,7 +33,7 @@ class ChaojieDataset(Dataset):
         img, label = self.imgs[index] # img : string, labels : tensor
         trans = {
             'train': transforms.Compose([
-                lambda x: Image.open(x).convert("RGB"),
+                lambda x: Image.open(x).convert("L"),
                 transforms.Resize((int(config.img_height * 1.5), int(config.img_weight * 1.5))),
                 transforms.RandomRotation(15),
                 transforms.CenterCrop((config.img_height,config.img_weight)),
@@ -41,7 +41,6 @@ class ChaojieDataset(Dataset):
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ]),
             'val': transforms.Compose([
-                lambda x: Image.open(x).convert("RGB"),
                 transforms.CenterCrop((config.img_height,config.img_weight)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])

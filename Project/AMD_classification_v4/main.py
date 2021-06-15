@@ -34,13 +34,13 @@ def evaluate(val_loader, model, optimizer, criterion, epoch):
     top1 = AverageMeter()
     # 2.2 创建进度条
     val_progressor = ProgressBar(mode="Val  ", epoch=epoch, total_epoch=config.epochs, model_name=config.model_name,
-                                 total=len(val_loader)*config.batch_size)
+                                 total=len(val_loader))
     # 2.3 验证过程
     model.cuda()
     model.eval()
     with torch.no_grad():
         for i, (input, target) in enumerate(val_loader):
-            val_progressor.current = i*config.batch_size
+            val_progressor.current
             input = input.cuda()
             target = torch.from_numpy(np.array(target)).long().cuda()  # 范式
             output = model(input)  # 将input输入模型得到预测输出

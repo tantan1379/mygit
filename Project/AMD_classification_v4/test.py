@@ -59,19 +59,17 @@ def main():
     # load dataset
     test_dataloader = DataLoader(ChaojieDataset(
         test_files,'val'), batch_size=10, shuffle=False, pin_memory=False)
-    best_model = torch.load(
-        "checkpoints/best_model/%s/0/model_best.pth.tar" % config.model_name)
-    model.load_state_dict(best_model["state_dict"])
-    accuracy = evaluate(model, test_dataloader)
-    print("accuracy =",accuracy)
+    # best_model = torch.load(
+    #     "checkpoints/best_model/%s/0/model_best.pth.tar" % config.model_name)
+    # model.load_state_dict(best_model["state_dict"])
+    precision = evaluate(model, test_dataloader)
+    # print(precision)
     labels = [1, 2, 3]
     confusion = ConfusionMatrix(num_classes=len(labels), labels=labels)
     model.eval()
     with torch.no_grad():
-        for iter,val_data in enumerate(test_dataloader):
+        for val_data in test_dataloader:
             val_images, val_labels = val_data
-            print(iter)
-            print(val_labels)
             # print(val_images)
             # print("real label",val_labels)
             # print(val_images.shape)
@@ -79,8 +77,9 @@ def main():
             # outputs = torch.softmax(outputs, dim=1)
             # print(outputs.shape)
             outputs = torch.argmax(outputs, dim=1)
-            print("prediction",outputs)
-            confusion.update(outputs.to("cpu").numpy(), val_labels.to("cpu").numpy())
+            # print("prediction",outputs)
+            confusion.update(outputs.to("cpu").numpy(),
+                             val_labels.to("cpu").numpy())
     confusion.plot()
     confusion.summary()
     # draw confusion matrix
