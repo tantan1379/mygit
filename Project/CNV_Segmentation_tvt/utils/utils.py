@@ -7,22 +7,16 @@
 @License :   (C)Copyright 2021-Now, MIPAV Lab (mipav.net), Soochow University. All rights reserved.
 '''
 
-# here put the import lib
-#import torch.nn as nn
 import torch
 from torch.nn import functional as F
-#from PIL import Image
 import numpy as np
 import pandas as pd
-#import os
 import os.path as osp
 import shutil
-#import math
 
 
 class AverageMeter(object):  # 标尺类
     """Computes and stores the average and current value"""
-
     def __init__(self):
         self.val = 0
         self.avg = 0
@@ -39,20 +33,19 @@ class AverageMeter(object):  # 标尺类
 def save_checkpoint(state, best_pred, epoch, is_best, checkpoint_path, filename='./checkpoint/checkpoint.pth.tar'):
     torch.save(state, filename)
     if is_best:
+        print("Saving best model to model_{:03d}_{:.4f}.pth.tar".format((epoch + 1), best_pred))
         shutil.copyfile(filename, osp.join(
             checkpoint_path, 'model_{:03d}_{:.4f}.pth.tar'.format((epoch + 1), best_pred)))
 
 
-def adjust_learning_rate(opt, optimizer, epoch):
-    """
-    Sets the learning rate to the initial LR decayed by 10 every 30 epochs(step = 30)
-    """
-    if opt.lr_mode == 'step':
-        lr = opt.lr * (0.1 ** (epoch // opt.step))
-    elif opt.lr_mode == 'poly':
-        lr = opt.lr * (1 - epoch / opt.num_epochs) ** 0.9
+# 调整学习率（包括step模式和poly模式，一般采用poly模式）
+def adjust_learning_rate(args, optimizer, epoch):
+    if args.lr_mode == 'step': # Sets the learning rate to the initial LR decayed by 10 every 30 epochs(step = 30)
+        lr = args.lr * (0.1 ** (epoch // args.step))
+    elif args.lr_mode == 'poly':
+        lr = args.lr * (1 - epoch / args.num_epochs) ** 0.9
     else:
-        raise ValueError('Unknown lr mode {}'.format(opt.lr_mode))
+        raise ValueError('Unknown lr mode {}'.format(args.lr_mode))
 
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
@@ -60,43 +53,68 @@ def adjust_learning_rate(opt, optimizer, epoch):
 
 
 def one_hot_it(label, label_info):
-	# return semantic_map -> [H, W, num_classes]
-	semantic_map = []
-	for info in label_info:
-		color = label_info[info]
-		# colour_map = np.full((label.shape[0], label.shape[1], label.shape[2]), colour, dtype=int)
-		equality = np.equal(label, color)
-		class_map = np.all(equality, axis=-1)
-		semantic_map.append(class_map)
-	semantic_map = np.stack(semantic_map, axis=-1)
-	return semantic_map
+# return semantic_map -> [H, W, num_classes]
+    semantic_map = []
+    for info in label_info:
+        color = label_info[info]
+        # colour_map = np.full((label.shape[0], label.shape[1], label.shape[2]), colour, dtype=int)
+        equality = np.equal(label, color)
+        class_map = np.all(equality, axis=-1)
+        semantic_map.append(class_map)
+    semantic_map = np.stack(semantic_map, axis=-1)
+    return semantic_map
 
 
-def compute_score_multi(predict, target, foreground=1, smooth=1):
+def compute_score_single(predict, target, foreground = 1,smooth=1):
     score = 0
     count = 0
-    target[target != foreground] = 0
-    predict[predict != foreground] = 0
+    target[target!=foreground]=0
+    predict[predict!=foreground]=0
     assert(predict.shape == target.shape)
-    overlap = ((predict == foreground)*(target == foreground)).sum()  # TP
-    union = (predict == foreground).sum() + \
-        (target == foreground).sum()-overlap  # FP+FN+TP
-    FP = (predict == foreground).sum()-overlap  # FP
-    FN = (target == foreground).sum()-overlap  # FN
-    TN = target.shape[0]*target.shape[1]-union  # TN
+    overlap = ((predict == foreground)*(target == foreground)).sum() #TP
+    union=(predict == foreground).sum() + (target == foreground).sum()-overlap #FP+FN+TP
+    FP=(predict == foreground).sum()-overlap #FP
+    FN=(target == foreground).sum()-overlap #FN
+    TN= target.shape[0]*target.shape[1]*target.shape[2]-union #TN
+
+
     #print('overlap:',overlap)
-    dice = (2*overlap + smooth) / (union+overlap+smooth)
+    dice=(2*overlap +smooth)/ (union+overlap+smooth)
+    
+    precsion=((predict == target).sum()+smooth) / (target.shape[0]*target.shape[1]*target.shape[2]+smooth)
+    
+    jaccard=(overlap+smooth) / (union+smooth)
 
-    precision = ((predict == target).sum()+smooth) / \
-        (target.shape[0]*target.shape[1]+smooth)
+    Sensitivity=(overlap+smooth) / ((target == foreground).sum()+smooth)
 
-    jaccard = (overlap+smooth) / (union+smooth)
+    Specificity=(TN+smooth) / (FP+TN+smooth)
+    
 
-    Sensitivity = (overlap+smooth) / ((target == foreground).sum()+smooth)
+    return dice,precsion,jaccard,Sensitivity,Specificity
 
-    Specificity = (TN+smooth) / (FP+TN+smooth)
-    return dice, precision, jaccard, Sensitivity, Specificity
+def eval_single_seg(predict, target, foreground = 1):
+    pred_seg=torch.round(torch.sigmoid(predict)).int()
+    pred_seg = pred_seg.data.cpu().numpy()
+    label_seg = target.data.cpu().numpy().astype(dtype=np.int)
+    assert(pred_seg.shape == label_seg.shape)
 
+    Dice = []
+    Precsion = []
+    Jaccard = []
+    Sensitivity=[]
+    Specificity=[]
+
+    n = pred_seg.shape[0]
+    
+    for i in range(n):
+        dice,precsion,jaccard,sensitivity,specificity= compute_score_single(pred_seg[i],label_seg[i])
+        Dice.append(dice)
+        Precsion .append(precsion)
+        Jaccard.append(jaccard)
+        Sensitivity.append(sensitivity)
+        Specificity.append(specificity)
+
+    return Dice,Precsion,Jaccard,Sensitivity,Specificity
 
 def eval_multi_seg(predict, target, foreground=1):
     pred_seg = torch.argmax(torch.exp(predict), dim=1).int()
@@ -124,7 +142,7 @@ def eval_multi_seg(predict, target, foreground=1):
     return Dice, Precision, Jaccard, Sensitivity, Specificity
 
 
-def compute_score_single(predict, target, foreground=1, smooth=1):
+def compute_score_multi(predict, target, foreground=1, smooth=1):
     score = 0
     count = 0
     target[target != foreground] = 0
@@ -135,42 +153,19 @@ def compute_score_single(predict, target, foreground=1, smooth=1):
         (target == foreground).sum()-overlap  # FP+FN+TP
     FP = (predict == foreground).sum()-overlap  # FP
     FN = (target == foreground).sum()-overlap  # FN
-    TN = target.shape[0]*target.shape[1]*target.shape[2]-union  # TN
-
+    TN = target.shape[0]*target.shape[1]-union  # TN
     #print('overlap:',overlap)
     dice = (2*overlap + smooth) / (union+overlap+smooth)
-    precsion = ((predict == target).sum()+smooth) / \
-        (target.shape[0]*target.shape[1]*target.shape[2]+smooth)
+
+    precision = ((predict == target).sum()+smooth) / \
+        (target.shape[0]*target.shape[1]+smooth)
+
     jaccard = (overlap+smooth) / (union+smooth)
+
     Sensitivity = (overlap+smooth) / ((target == foreground).sum()+smooth)
+
     Specificity = (TN+smooth) / (FP+TN+smooth)
-    return dice, precsion, jaccard, Sensitivity, Specificity
-
-
-def eval_single_seg(predict, target, foreground=1):
-    pred_seg = torch.round(torch.sigmoid(predict)).int()
-    pred_seg = pred_seg.data.cpu().numpy()
-    label_seg = target.data.cpu().numpy().astype(dtype=np.int)
-    assert(pred_seg.shape == label_seg.shape)
-    Dice,Precision,Jaccard,Sensitivity,Specificity=0,0,0,0,0
-
-    n = pred_seg.shape[0]
-    for i in range(n):
-        dice, precision, jaccard, sensitivity, specificity = compute_score_single(
-            pred_seg[i], label_seg[i])
-        Dice+=dice
-        Precision+=precision
-        Jaccard+=jaccard
-        Sensitivity+=sensitivity
-        Specificity+=specificity
-    Dice = Dice/n
-    Precision = Precision/n
-    Jaccard = Jaccard/n
-    Sensitivity = Sensitivity/n
-    Specificity = Specificity/n
-    
-
-    return Dice, Precision, Jaccard, Sensitivity, Specificity
+    return dice, precision, jaccard, Sensitivity, Specificity
 
 
 def batch_pix_accuracy(pred, label, nclass=1):

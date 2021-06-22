@@ -1,3 +1,12 @@
+'''
+@File    :   CNV_AND_SRF.py
+@Time    :   2021/06/20 13:20:29
+@Author  :   Tan Wenhao 
+@Version :   1.0
+@Contact :   tanritian1@163.com
+@License :   (C)Copyright 2021-Now, MIPAV Lab (mipav.net), Soochow University. All rights reserved.
+'''
+
 import torch
 import glob
 import os

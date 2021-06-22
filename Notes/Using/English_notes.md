@@ -120,7 +120,11 @@ aggregate 聚合，加和
 
 ### Word
 
+impede (v.) 阻碍
+
 Albeit (prep.) 虽然
+
+deprive (v.) 剥夺
 
 mainstay (n.) 支柱
 
@@ -239,6 +243,10 @@ indispensable (adj.)不可缺少的
 
 
 ### Match
+
+by virtue of 由于
+
+Being subject to.. 受制于（由于）
 
 the extent of ..的程度
 

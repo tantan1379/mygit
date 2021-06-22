@@ -21,6 +21,8 @@ class CPFNet(nn.Module):
         super(CPFNet, self).__init__()
 
         self.backbone = resnet34(pretrained=True)
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3,
+                                   bias=False)
         self.expansion = expansion
         self.base_channel = base_channel
         if self.expansion == 4 and self.base_channel == 64:
@@ -60,8 +62,8 @@ class CPFNet(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
-
-        x = self.backbone.conv1(x)
+        x = self.conv1(x)
+        # x = self.backbone.conv1(x)
         x = self.backbone.bn1(x)
         c1 = self.backbone.relu(x)  # 1/2  64
 

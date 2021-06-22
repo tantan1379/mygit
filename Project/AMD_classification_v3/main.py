@@ -108,7 +108,7 @@ def train(args, model, optimizer, criterion, dataloader_train, dataloader_val, w
             os.makedirs(checkpoint_dir)
         checkpoint_latest_name = os.path.join(
             checkpoint_dir, 'checkpoint_latest.path.tar')
-        print(best_pred)
+        # print(best_pred)
         u.save_checkpoint({
             'epoch': epoch+1,
             'state_dict': model.state_dict(),
