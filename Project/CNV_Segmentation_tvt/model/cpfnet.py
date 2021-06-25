@@ -62,8 +62,8 @@ class CPFNet(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
-        x = self.conv1(x)
-        # x = self.backbone.conv1(x)
+        # x = self.conv1(x)
+        x = self.backbone.conv1(x)
         x = self.backbone.bn1(x)
         c1 = self.backbone.relu(x)  # 1/2  64
 
@@ -85,9 +85,9 @@ class CPFNet(nn.Module):
         d2 = self.relu(self.decoder3(d3)+m2)  # 64
         d1 = self.decoder2(d2)+c1  # 32
         main_out = self.main_head(d1)
-        main_out = F.log_softmax(main_out, dim=1)
+        # main_out = F.log_softmax(main_out, dim=1)
 
-        return main_out, main_out
+        return main_out
 
     def _initialize_weights(self):
         for m in self.modules():

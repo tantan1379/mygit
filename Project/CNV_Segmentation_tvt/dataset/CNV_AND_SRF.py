@@ -21,7 +21,7 @@ import imgaug as ia
 import random
 
 
-class CNV(data.Dataset):
+class CNV_SRF(data.Dataset):
     def __init__(self, dataset_path, scale, mode='train'):
         super().__init__()
         self.mode = mode

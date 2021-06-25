@@ -33,10 +33,10 @@ from model.cpfnet import CPFNet
 # from model.resunet import DeepResUNet,HybridResUNet,ONet
 
 
-def val(args, model, dataloader, epoch):
+def val(args, model, dataloader):
     with torch.no_grad():
         model.eval()
-        val_progressor = pb.Val_ProgressBar(model_name=args.net_work,total=len(dataloader))
+        val_progressor = pb.Val_ProgressBar(model_name=args.net_work,total=len(dataloader)) # 验证进度条，用于显示指标
 
         total_Dice = []
         total_Acc = []
@@ -52,14 +52,14 @@ def val(args, model, dataloader, epoch):
 
             # get RGB predict image
             predict = model(data)
-            Dice, Acc, jaccard, Sensitivity, Specificity = u.eval_single_seg(predict, label)
-
+            Dice, Acc, jaccard, Sensitivity, Specificity = u.eval_single_seg(predict, label) # 每个指标返回的是batchsize长的列表
+            # 将每个batch的列表相加，在迭代中动态显示指标的平均值（最终值）
             total_Dice += Dice
             total_Acc += Acc
             total_jaccard += jaccard
             total_Sensitivity += Sensitivity
             total_Specificity += Specificity
-        
+            # 表示对batchsize个值取平均，len=batchsize
             dice = sum(total_Dice) / len(total_Dice)
             acc = sum(total_Acc) / len(total_Acc)
             jac = sum(total_jaccard) / len(total_jaccard)
@@ -75,18 +75,19 @@ def val(args, model, dataloader, epoch):
 def train(args, model, optimizer, criterion, dataloader_train, dataloader_val, writer):
     best_pred, best_acc, best_jac, best_sen, best_spe = 0.0, 0.0, 0.0, 0.0, 0.0
     best_epoch = 0
-    end_epoch = 1 # 可以设为1，用于直接进入test过程，检查bug
-    step = 0      # tensorboard相关
-    end_index = 1 # 可以设为1，用于直接进入val过程，检查bug
+    end_epoch = None # 可以设为1，用于直接进入test过程，检查bug
+    step = 0         # tensorboard相关
+    end_index = None # 可以设为1，用于直接进入val过程，检查bug
     current_time = datetime.now().strftime('%b%d_%H-%M-%S')
     with open("./logs/%s.txt" % (args.net_work), "a") as f:
         print(current_time, file=f)
     for epoch in range(args.num_epochs):
         if(epoch==end_epoch):
             break
-        train_loss = u.AverageMeter()
-        train_progressor = pb.Train_ProgressBar(mode='train', epoch=epoch, total_epoch=args.num_epochs,model_name=args.net_work, total=len(dataloader_train)*args.batch_size)
-        lr = u.adjust_learning_rate(args, optimizer, epoch)
+        train_loss = u.AverageMeter() # 滑动平均
+        train_progressor = pb.Train_ProgressBar(mode='train', epoch=epoch, total_epoch=args.num_epochs, 
+            model_name=args.net_work, total=len(dataloader_train)*args.batch_size) # train进度条，用于显示loss和lr
+        lr = u.adjust_learning_rate(args, optimizer, epoch) # 自动调节学习率
         model.train()
 
         for i, (data, label) in enumerate(dataloader_train):
@@ -99,24 +100,24 @@ def train(args, model, optimizer, criterion, dataloader_train, dataloader_val, w
                 label = label.cuda()
 
             output = model(data)
-            output = torch.sigmoid(output)
+            output = torch.sigmoid(output) # 将输出结果映射到0:1,满足BCELoss要求
 
-            loss_aux = criterion[0](output, label)
-            loss_main = criterion[1](output, label)
+            loss_aux = criterion[0](output, label) # criterion[0]=BCELoss
+            loss_main = criterion[1](output, label) # criterion[1]=DiceLoss
             loss = loss_main + loss_aux
-            train_loss.update(loss.item(), data.size(0))
+            train_loss.update(loss.item(), data.size(0)) # loss.item()表示去除张量的元素值，data.size()表示batchsize
             train_progressor.current_loss = train_loss.avg
             train_progressor.current_lr = lr
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            train_progressor()
+            optimizer.zero_grad() # 梯度清零
+            loss.backward() # 反向传播
+            optimizer.step() # 梯度更新
+            train_progressor() # 显示进度条
             step += 1
             if step % 10 == 0:
                 writer.add_scalar('Train/loss_step', loss, step)
-        train_progressor.done()
+        train_progressor.done() # 输出logs
         writer.add_scalar('Train/loss_epoch', float(train_loss.avg), epoch)
-        Dice, Acc, jaccard, Sensitivity, Specificity = val(args, model, dataloader_val, epoch)
+        Dice, Acc, jaccard, Sensitivity, Specificity = val(args, model, dataloader_val)
         writer.add_scalar('Valid/Dice_val', Dice, epoch)
         writer.add_scalar('Valid/Acc_val', Acc, epoch)
         writer.add_scalar('Valid/Jac_val', jaccard, epoch)
@@ -130,16 +131,16 @@ def train(args, model, optimizer, criterion, dataloader_train, dataloader_val, w
             best_acc = max(best_acc, Acc)
             best_sen = max(best_sen, Sensitivity)
             best_spe = max(best_spe, Specificity)
-            best_epoch = epoch+1
+            best_epoch = epoch + 1
         checkpoint_dir = os.path.join(args.save_model_path)
         if not os.path.exists(checkpoint_dir):
             os.makedirs(checkpoint_dir)
-        checkpoint_latest_name = os.path.join(checkpoint_dir, 'checkpoint_latest.path.tar')
+        checkpoint_latest_name = os.path.join(checkpoint_dir, 'checkpoint_latest.path.tar') # 保存最新的一个checkpoint用于中继训练
         u.save_checkpoint({
             'epoch': best_epoch,
             'state_dict': model.state_dict(),
             'best_dice': best_pred
-        }, best_pred, epoch, is_best, checkpoint_dir, filename=checkpoint_latest_name)
+        }, best_pred, epoch, is_best, checkpoint_dir, filename=checkpoint_latest_name) # 保存最好的
     # 记录该折分割效果最好一次epoch的所有参数
     best_indicator_message = "best pred in Epoch:{}\nDice={:.4f} Accuracy={:.4f} jaccard={:.4f} Sensitivity={:.4f} Specificity={:.4f}".format(
         best_epoch, best_pred, best_acc, best_jac, best_sen, best_spe)
@@ -166,7 +167,7 @@ def eval(args, model, dataloader):
         total_Sensitivity = []
         total_Specificity = []
 
-        for i, (data, label) in enumerate(dataloader):
+        for i, (data, [label,label_path]) in enumerate(dataloader):
             test_progressor.current = i
             if torch.cuda.is_available() and args.use_gpu:
                 data = data.cuda()
@@ -175,7 +176,11 @@ def eval(args, model, dataloader):
             # get RGB predict image
             predict = model(data)
             Dice, Acc, jaccard, Sensitivity, Specificity = u.eval_single_seg(predict, label)
-
+            predict = torch.round(torch.sigmoid(predict)).byte()
+            predict_seg = predict.data.cpu().numpy().squeeze()*255
+            img = Image.fromarray(predict_seg,mode='L')
+            label_name = label_path[0].split(os.sep)[-1].split('.')[0]+'.png'
+            img.save(args.result_path+label_name)
             total_Dice += Dice
             total_Acc += Acc
             total_jaccard += jaccard
@@ -204,18 +209,19 @@ def main(mode='train', args=None, writer=None):
                                 num_workers=args.num_workers, pin_memory=True, drop_last=True)
     dataset_test = CNV(dataset_path, scale=(
         args.crop_height, args.crop_width), mode='test')
-    dataloader_test = DataLoader(dataset_test, batch_size=1, shuffle=True,
+    dataloader_test = DataLoader(dataset_test, batch_size=1, shuffle=False,
                                  num_workers=args.num_workers, pin_memory=True, drop_last=True)
     # build model
     os.environ['CUDA_VISIBLE_DEVICES'] = args.cuda
     # load model
-    model_all = {'unet': UNet(in_channels=args.input_channel, n_classes=args.num_classes),
-                 'resunetplusplus': ResUnetPlusPlus(channel=args.input_channel),
+    model_all = {'unet': UNet(in_channels=1, n_classes=args.num_classes),
+                 'resunetplusplus': ResUnetPlusPlus(channel=1),
                  'cpfnet':CPFNet(),
                 #  'resunet1':DeepResUNet(in_channels=args.input_channel),
                  }
     model = model_all[args.net_work].cuda()
     cudnn.benchmark = True
+
 
     if(args.optimizer=="SGD"):
         optimizer = torch.optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum, weight_decay=args.weight_decay)

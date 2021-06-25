@@ -153,6 +153,7 @@ def eval(args, model, dataloader):
     print('\nStart Test!')
     for c in os.listdir(os.path.join("./checkpoints",args.net_work)):
         pretrained_model_path = os.path.join("./checkpoints",args.net_work,c) # 最后一个模型(最好的)
+        break
     print("Load best model "+'\"'+os.path.abspath(pretrained_model_path)+'\"')
     checkpoint = torch.load(pretrained_model_path)
     model.load_state_dict(checkpoint['state_dict'])
@@ -213,7 +214,7 @@ def main(mode='train', args=None, writer=None):
     # load model
     model_all = {'unet_2.5d': UNet(in_channels=3, n_classes=args.num_classes),
                  'resunetplusplus': ResUnetPlusPlus(channel=3),
-                 'cpfnet':CPFNet(),
+                 'cpfnet_2.5d':CPFNet(),
                  }
     model = model_all[args.net_work].cuda()
     cudnn.benchmark = True

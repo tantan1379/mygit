@@ -28,12 +28,21 @@ class CNV(data.Dataset):
         self.img_path = dataset_path+'/img'
         self.images_list, self.labels_list = self.read_list(
             self.img_path)
-        self.seq = iaa.SomeOf(n=(1, 5), children=[                  # 数据增强序列（同时适用于img和mask)
-                iaa.Dropout([0.05, 0.2]),                           # 随机失活
-                iaa.Fliplr(0.5),                                    # 水平翻转
-                iaa.Flipud(0.5),                                    # 垂直翻转
-                iaa.Sharpen(alpha=(0, 1.0), lightness=(0.75, 1.5)), # 锐化
-                iaa.Affine(rotate=(-15,15))], random_order=True)    # 随机旋转
+        self.seq = iaa.Sequential([
+            iaa.Fliplr(0.5),                                                 # 水平翻转
+            iaa.SomeOf(n=(0,2),children=[                                   
+                iaa.Affine(
+                    scale={"x": (0.9, 1.1), "y": (0.9, 1.1)},                # 尺度缩放
+                    translate_percent={"x": (-0.1, 0.1), "y": (-0.1, 0.1)},  # 平移
+                    rotate=(-10, 10)),                                       # 旋转
+                iaa.OneOf([
+                    iaa.GaussianBlur((0, 1.0)),
+                    iaa.AverageBlur(k=(0, 3)),
+                    iaa.MedianBlur(k=(1, 3))]),
+                iaa.AdditiveGaussianNoise(scale=(0.0, 0.06 * 255)),  # 高斯噪声
+                iaa.contrast.LinearContrast((0.9, 1.1))
+            ],random_order=True)
+        ])
         # self.resize_label = transforms.Resize(scale, Image.NEAREST)      # 标签缩放（最近邻插值）[对于标签不需要过高质量]
         # self.resize_img = transforms.Resize(scale, Image.BILINEAR)      # 图像缩放（双线性插值）
         self.to_tensor = transforms.ToTensor()                          # Image对象转Tensor
@@ -52,11 +61,19 @@ class CNV(data.Dataset):
             segmap = ia.SegmentationMapsOnImage(label, shape=label.shape) # 将分割结果转换为SegmentationMapOnImage类型，方便后面可视化
             img = seq_det.augment_image(img) # 对图像进行数据增强
             label = seq_det.augment_segmentation_maps([segmap])[0].get_arr().astype(np.uint8) # 将数据增强应用在分割标签上，并且转换成np类型
-        label = np.reshape(label, (1,)+label.shape)
-        label = torch.from_numpy(label.copy()).float()
-        labels = label
+        elif self.mode=='val':
+            label = np.reshape(label, (1,)+label.shape)
+            label = torch.from_numpy(label.copy()).float()
+            labels = label
+
+        else:
+            label = np.reshape(label, (1,)+label.shape)
+            label = torch.from_numpy(label.copy()).float()
+            labels = [label,labels]
+
         img = np.reshape(img, img.shape+(1,))
         img = self.to_tensor(img.copy()).float()
+
         return img, labels
 
     def __len__(self):
